@@ -726,3 +726,4 @@ canvas.sky { object-fit: cover; display: block; }
   .detail-head { flex-wrap: wrap; }
 }
 .mobile-bar { display: none; align-items: center; gap: 10px; margin-bottom: 14px; }
+.sidebar-foot .menu { top: auto; bottom: calc(100% + 6px); }
