@@ -1,0 +1,5 @@
+/data/
+/bin/
+*.tmp
+web/node_modules/
+.DS_Store
