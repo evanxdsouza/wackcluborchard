@@ -4,11 +4,13 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"io/fs"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -37,6 +39,10 @@ func env(k, d string) string {
 }
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "admin" {
+		adminCommand(os.Args[2:])
+		return
+	}
 	addr := flag.String("addr", env("ORCHARD_ADDR", ":"+env("PORT", "8080")), "listen address")
 	dataDir := flag.String("data", env("ORCHARD_DATA", "./data"), "state directory")
 	rt := flag.String("runtime", env("ORCHARD_RUNTIME", "auto"), "runtime: auto, kubernetes or sim")
@@ -91,6 +97,9 @@ func main() {
 		Demo:         *demo,
 	})
 
+	if err := srv.AdminSocket(filepath.Join(*dataDir, "admin.sock")); err != nil {
+		log.Printf("admin socket: %v", err)
+	}
 	if tok, minted := api.MintSetupToken(st); minted {
 		base := frontend
 		if base == "" {
@@ -188,4 +197,63 @@ func initSettings(st *store.Store) {
 		}
 		return nil
 	})
+}
+
+// adminCommand talks to a running server over its admin socket. It is
+// what `orchardctl` runs inside the server pod.
+func adminCommand(args []string) {
+	fs := flag.NewFlagSet("admin", flag.ExitOnError)
+	dataDir := fs.String("data", env("ORCHARD_DATA", "./data"), "state directory")
+	url := fs.String("url", "", "base URL for the claim link")
+	if len(args) == 0 {
+		fmt.Fprintln(os.Stderr, "usage: orchard-server admin <claim|status|set key=value...>")
+		os.Exit(2)
+	}
+	cmd := args[0]
+	fs.Parse(args[1:])
+	sock := filepath.Join(*dataDir, "admin.sock")
+	client := &http.Client{Transport: &http.Transport{DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
+		var d net.Dialer
+		return d.DialContext(ctx, "unix", sock)
+	}}}
+	var resp *http.Response
+	var err error
+	switch cmd {
+	case "claim":
+		b, _ := json.Marshal(map[string]string{"url": *url})
+		resp, err = client.Post("http://orchard/claim", "application/json", strings.NewReader(string(b)))
+	case "status":
+		resp, err = client.Get("http://orchard/status")
+	case "set":
+		body := map[string]any{}
+		for _, kv := range fs.Args() {
+			k, v, _ := strings.Cut(kv, "=")
+			switch v {
+			case "true":
+				body[k] = true
+			case "false":
+				body[k] = false
+			default:
+				body[k] = v
+			}
+		}
+		b, _ := json.Marshal(body)
+		resp, err = client.Post("http://orchard/settings", "application/json", strings.NewReader(string(b)))
+	default:
+		fmt.Fprintln(os.Stderr, "unknown admin command", cmd)
+		os.Exit(2)
+	}
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "cannot reach the server at %s: %v\n", sock, err)
+		os.Exit(1)
+	}
+	defer resp.Body.Close()
+	var out map[string]any
+	json.NewDecoder(resp.Body).Decode(&out)
+	if u, ok := out["url"].(string); ok {
+		fmt.Println(u)
+		return
+	}
+	b, _ := json.MarshalIndent(out, "", "  ")
+	fmt.Println(string(b))
 }

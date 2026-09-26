@@ -1,0 +1,8 @@
+apiVersion: v2
+name: orchard
+description: Wack Club Orchard, a self-hosted Kubernetes-native platform for apps, databases and jobs.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://github.com/evanxdsouza/wackcluborchard
+keywords: [paas, platform, kubernetes, deploy]

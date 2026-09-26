@@ -1,0 +1,72 @@
+# Wack Club Orchard. The chart installs Orchard's own components and no
+# cluster operators: bring CloudNativePG, Traefik with Gateway API,
+# cert-manager, a default StorageClass and (unless registry.enabled) an
+# OCI registry.
+
+image:
+  repository: ghcr.io/evanxdsouza/wackcluborchard
+  tag: ""            # defaults to the chart appVersion
+  pullPolicy: IfNotPresent
+
+# Where the dashboard lives.
+ingress:
+  enabled: true
+  host: orchard.example.com
+  extraHosts: []     # more names Traefik should answer for (orchardctl hostname add)
+  className: traefik
+  tls: true
+  certClusterIssuer: letsencrypt-prod
+
+# Generated app hostnames: <app>.<appDomain> through one shared Gateway
+# with a wildcard certificate (DNS-01).
+gateway:
+  enabled: true
+  name: orchard
+  className: traefik
+  http:
+    appDomain: apps.example.com
+    wildcardSecret: orchard-apps-wildcard
+    wildcardIssuer: letsencrypt-dns
+
+# Custom domains on user apps become Ingresses with these settings.
+tenant:
+  storageClass: ""   # empty means the cluster default
+  ingressClass: traefik
+  certClusterIssuer: letsencrypt-prod
+
+# A zot registry for built images. Turn off to use your own and set
+# registry.host.
+registry:
+  enabled: true
+  host: ""           # defaults to the in-cluster zot service
+  insecure: true
+  storage: 20Gi
+
+persistence:
+  size: 5Gi
+  storageClass: ""
+
+signupMode: open     # open, invite, closed
+buildSlots: 2
+
+mcp:
+  enabled: true
+  host: ""           # e.g. mcp.example.com; empty serves /mcp on the dashboard host
+
+tenantSandbox:       # gVisor for tenant app pods
+  enabled: false
+  runtimeClassName: gvisor
+builderSandbox:      # Kata VMs for build jobs
+  enabled: false
+  runtimeClassName: kata
+
+server:
+  replicas: 1        # the control-plane store is single-writer
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { memory: 512Mi }
+  # Extra environment. The installer keeps FRONTEND_URL, PUBLIC_IP and the
+  # public ports here; see docs/reference/configuration.md.
+  env:
+    - name: FRONTEND_URL
+      value: https://orchard.example.com

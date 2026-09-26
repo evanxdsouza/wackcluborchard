@@ -1,0 +1,53 @@
+{{- if .Values.ingress.enabled }}
+{{- $hosts := prepend .Values.ingress.extraHosts .Values.ingress.host }}
+{{- if and .Values.mcp.enabled .Values.mcp.host }}
+{{- $hosts = append $hosts .Values.mcp.host }}
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orchard
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "orchard.labels" . | nindent 4 }}
+  {{- if .Values.ingress.tls }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.certClusterIssuer }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    - hosts:
+        {{- range $hosts }}
+        {{- if not (regexMatch "^[0-9.]+$" .) }}
+        - {{ . }}
+        {{- end }}
+        {{- end }}
+      secretName: orchard-tls
+  {{- end }}
+  rules:
+    {{- range $hosts }}
+    {{- if not (regexMatch "^[0-9.]+$" .) }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: orchard-server
+                port:
+                  number: 8080
+    {{- end }}
+    {{- end }}
+    # requests by bare IP (LAN mode) fall through to the default rule
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: orchard-server
+                port:
+                  number: 8080
+{{- end }}

@@ -1,0 +1,10 @@
+Wack Club Orchard is starting in namespace {{ .Release.Namespace }}.
+
+A fresh install has no superadmin. Sign up at https://{{ .Values.ingress.host }},
+then mint the single-use claim link:
+
+  kubectl -n {{ .Release.Namespace }} exec deploy/orchard-server -- orchard-server admin claim --data /data
+
+or read the one printed at first boot:
+
+  kubectl -n {{ .Release.Namespace }} logs deploy/orchard-server | grep -A2 'no superadmin'
