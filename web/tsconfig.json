@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "strict": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "outDir": "dist/assets",
+    "sourceMap": false,
+    "removeComments": true,
+    "noEmitOnError": false
+  },
+  "include": ["src"]
+}
