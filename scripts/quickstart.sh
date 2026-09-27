@@ -24,6 +24,9 @@ NAMESPACE=wackcluborchard
 GATEWAY_API_VERSION="${GATEWAY_API_VERSION:-v1.2.1}"
 CERT_MANAGER_VERSION="${CERT_MANAGER_VERSION:-v1.16.2}"
 CNPG_CHART_VERSION="${CNPG_CHART_VERSION:-0.23.0}"
+# k3s bundles Traefik; 1.32+ ships Traefik v3, whose Gateway API provider
+# the chart's Gateway (listeners on 8000/8443) is written for.
+K3S_IMAGE="${WACKCLUBORCHARD_K3S_IMAGE:-rancher/k3s:v1.33.1-k3s1}"
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
 chart="$root/deploy/helm/wackcluborchard"
@@ -55,8 +58,9 @@ build_image() {
 case "${1:-up}" in
   down)
     need k3d
-    k3d cluster delete "$CLUSTER" || true
+    # the registry first: it sits on the cluster network and keeps it alive
     k3d registry delete "k3d-$REGISTRY" 2>/dev/null || true
+    k3d cluster delete "$CLUSTER" || true
     echo "deleted $CLUSTER"
     exit 0
     ;;
@@ -91,6 +95,7 @@ else
   regconf="$(mktemp)"
   printf 'mirrors:\n  "k3d-%s:5000":\n    endpoint:\n      - http://k3d-%s:5000\n' "$REGISTRY" "$REGISTRY" > "$regconf"
   k3d cluster create "$CLUSTER" \
+    --image "$K3S_IMAGE" \
     --agents 1 \
     --registry-use "k3d-$REGISTRY:$REGISTRY_PORT" \
     --registry-config "$regconf" \
@@ -120,16 +125,28 @@ spec:
     gateway:
       enabled: false
 EOF
-# k3s re-runs the Traefik chart when its config changes
-for _ in $(seq 60); do
-  k -n kube-system get deploy traefik >/dev/null 2>&1 && break
+# k3s installs Traefik with a helm-install job, and re-runs it when the
+# config above changes. On a first boot that pulls several images, so give
+# it a while before calling it stuck.
+echo "waiting for Traefik (first boot pulls images; this can take a few minutes)"
+traefik_ok=""
+for _ in $(seq 150); do
+  if k -n kube-system get deploy traefik >/dev/null 2>&1; then traefik_ok=1; break; fi
   sleep 2
 done
-k -n kube-system rollout status deploy/traefik --timeout 180s >/dev/null || true
-for _ in $(seq 60); do
-  k get gatewayclass traefik >/dev/null 2>&1 && break
+if [ -z "$traefik_ok" ]; then
+  k -n kube-system get pods >&2 || true
+  k -n kube-system logs job/helm-install-traefik --tail 30 >&2 2>/dev/null || true
+  die "Traefik did not come up within 5 minutes (pods and helm-install log above). Re-run $0: it picks up where it stopped."
+fi
+k -n kube-system rollout status deploy/traefik --timeout 300s >/dev/null \
+  || die "Traefik is not becoming ready: kubectl --context $ctx -n kube-system describe deploy traefik"
+gw_ok=""
+for _ in $(seq 90); do
+  if k get gatewayclass traefik >/dev/null 2>&1; then gw_ok=1; break; fi
   sleep 2
 done
+[ -n "$gw_ok" ] || die "Traefik is running but has not registered the 'traefik' GatewayClass. It needs Traefik v3 (k3s 1.32 or newer); this cluster runs $(k -n kube-system get deploy traefik -o jsonpath='{.spec.template.spec.containers[0].image}'). Run '$0 down' and try again."
 
 step "cert-manager $CERT_MANAGER_VERSION"
 helm repo add jetstack https://charts.jetstack.io >/dev/null 2>&1 || true

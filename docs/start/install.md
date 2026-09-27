@@ -157,7 +157,7 @@ claim link.
 
 Ports and versions are overridable with `WACKCLUBORCHARD_HTTP_PORT`,
 `WACKCLUBORCHARD_HTTPS_PORT`, `WACKCLUBORCHARD_REGISTRY_PORT`,
-`WACKCLUBORCHARD_CLUSTER`, `GATEWAY_API_VERSION`, `CERT_MANAGER_VERSION` and
+`WACKCLUBORCHARD_CLUSTER`, `WACKCLUBORCHARD_K3S_IMAGE`, `GATEWAY_API_VERSION`, `CERT_MANAGER_VERSION` and
 `CNPG_CHART_VERSION`. Without any cluster at all, `go run
 ./cmd/wackcluborchard-server` runs against the simulated runtime instead.
 
