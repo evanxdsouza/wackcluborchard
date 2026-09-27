@@ -105,9 +105,6 @@ else
 fi
 kubectl config use-context "$ctx" >/dev/null
 
-step "Gateway API $GATEWAY_API_VERSION"
-k apply -f "https://github.com/kubernetes-sigs/gateway-api/releases/download/$GATEWAY_API_VERSION/standard-install.yaml" >/dev/null
-
 step "Traefik: enable the Gateway API provider"
 k apply -f - >/dev/null <<'EOF'
 apiVersion: helm.cattle.io/v1
@@ -125,22 +122,41 @@ spec:
     gateway:
       enabled: false
 EOF
+
+# k3s's traefik-crd chart ships the Gateway API CRDs itself, and Helm refuses
+# to adopt copies it did not create, which leaves Traefik uninstalled. Earlier
+# versions of this script applied them first; remove those so it can proceed.
+if ! k -n kube-system get deploy traefik >/dev/null 2>&1 \
+  && k get crd gateways.gateway.networking.k8s.io >/dev/null 2>&1 \
+  && [ "$(k get crd gateways.gateway.networking.k8s.io -o jsonpath='{.metadata.labels.app\.kubernetes\.io/managed-by}')" != Helm ]; then
+  echo "removing Gateway API CRDs that were not installed by Traefik's chart"
+  k get crd -o name | grep 'gateway.networking.k8s.io$' | xargs -r kubectl --context "$ctx" delete --wait=false >/dev/null
+  k -n kube-system delete pod -l job-name=helm-install-traefik-crd --ignore-not-found >/dev/null
+  k -n kube-system delete pod -l job-name=helm-install-traefik --ignore-not-found >/dev/null
+fi
+
 # k3s installs Traefik with a helm-install job, and re-runs it when the
 # config above changes. On a first boot that pulls several images, so give
 # it a while before calling it stuck.
-echo "waiting for Traefik (first boot pulls images; this can take a few minutes)"
+echo "waiting for Traefik (first boot pulls images; this can take several minutes)"
 traefik_ok=""
-for _ in $(seq 150); do
+for _ in $(seq 300); do
   if k -n kube-system get deploy traefik >/dev/null 2>&1; then traefik_ok=1; break; fi
   sleep 2
 done
 if [ -z "$traefik_ok" ]; then
   k -n kube-system get pods >&2 || true
-  k -n kube-system logs job/helm-install-traefik --tail 30 >&2 2>/dev/null || true
-  die "Traefik did not come up within 5 minutes (pods and helm-install log above). Re-run $0: it picks up where it stopped."
+  k -n kube-system logs job/helm-install-traefik-crd --tail 15 >&2 2>/dev/null || true
+  k -n kube-system logs job/helm-install-traefik --tail 15 >&2 2>/dev/null || true
+  die "Traefik did not come up within 10 minutes (pods and helm-install log above). Re-run $0: it picks up where it stopped."
 fi
 k -n kube-system rollout status deploy/traefik --timeout 300s >/dev/null \
   || die "Traefik is not becoming ready: kubectl --context $ctx -n kube-system describe deploy traefik"
+# Traefik's chart normally brings the Gateway API CRDs; fall back to upstream.
+if ! k get crd httproutes.gateway.networking.k8s.io >/dev/null 2>&1; then
+  step "Gateway API $GATEWAY_API_VERSION"
+  k apply -f "https://github.com/kubernetes-sigs/gateway-api/releases/download/$GATEWAY_API_VERSION/standard-install.yaml" >/dev/null
+fi
 gw_ok=""
 for _ in $(seq 90); do
   if k get gatewayclass traefik >/dev/null 2>&1; then gw_ok=1; break; fi
