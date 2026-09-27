@@ -78,7 +78,7 @@ function AuthLayout({ children, headline, sub }: { children: any; headline?: str
   return (
     <div class="auth-page">
       <div class="auth-art">
-        <Sky seed="wack-club-orchard" preset="clouds" />
+        <Sky seed="wackcluborchard" preset="clouds" />
         <div class="auth-art-text">
           <h1>{headline || "Ship things to your own cluster."}</h1>
           <p>{sub || "Wack Club Orchard builds your repos, runs them on Kubernetes, gives them HTTPS and a database, and shows you the logs when they break."}</p>

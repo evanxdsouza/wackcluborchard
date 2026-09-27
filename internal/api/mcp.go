@@ -534,7 +534,7 @@ func (s *Server) mcpHandle(ctx context.Context, u *store.User, rq rpcReq) any {
 		return reply(map[string]any{
 			"protocolVersion": ver,
 			"capabilities":    map[string]any{"tools": map[string]any{"listChanged": false}},
-			"serverInfo":      map[string]string{"name": "wack-club-orchard", "version": s.P.Cfg.Version},
+			"serverInfo":      map[string]string{"name": "wackcluborchard", "version": s.P.Cfg.Version},
 			"instructions":    "Wack Club Orchard is a Kubernetes platform. Projects hold apps (deployments), managed PostgreSQL databases and jobs. Refer to things by id or unique name. Deploys and builds are asynchronous: check get_app or list_deploys for progress. Variables may reference databases with ${{ dbname.DATABASE_URL }}.",
 		})
 	case "ping":

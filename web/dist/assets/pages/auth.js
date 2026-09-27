@@ -73,7 +73,7 @@ async function loginWithPasskey() {
 function AuthLayout({ children, headline, sub }) {
     return (h("div", { class: "auth-page" },
         h("div", { class: "auth-art" },
-            h(Sky, { seed: "wack-club-orchard", preset: "clouds" }),
+            h(Sky, { seed: "wackcluborchard", preset: "clouds" }),
             h("div", { class: "auth-art-text" },
                 h("h1", null, headline || "Ship things to your own cluster."),
                 h("p", null, sub || "Wack Club Orchard builds your repos, runs them on Kubernetes, gives them HTTPS and a database, and shows you the logs when they break."))),
