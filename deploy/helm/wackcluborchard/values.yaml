@@ -5,7 +5,7 @@
 
 image:
   repository: ghcr.io/evanxdsouza/wackcluborchard
-  tag: ""            # defaults to the chart appVersion
+  tag: main          # CI publishes main and each commit sha
   pullPolicy: IfNotPresent
 
 # Where the dashboard lives.

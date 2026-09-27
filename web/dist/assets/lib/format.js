@@ -1,3 +1,4 @@
+import { session } from "./state.js";
 export function timeAgo(iso, now = Date.now()) {
     if (!iso)
         return "never";
@@ -78,4 +79,8 @@ export function copyText(text) {
     document.execCommand("copy");
     ta.remove();
     return Promise.resolve();
+}
+export function appURL(host) {
+    const port = session.get().auth?.httpsPort;
+    return port && port !== 443 ? `https://${host}:${port}` : `https://${host}`;
 }

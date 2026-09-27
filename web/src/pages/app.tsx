@@ -1,7 +1,7 @@
 import { h, Fragment, useEffect, useRef, useState } from "../lib/sprout.js";
 import { Link, navigate, query, setQuery } from "../lib/router.js";
 import { useApi, useEvents, post, patch, del, act, get } from "../lib/api.js";
-import { timeAgo, duration, cpu, mem, plural, shortSha, dateTime } from "../lib/format.js";
+import { timeAgo, duration, cpu, mem, plural, shortSha, dateTime, appURL } from "../lib/format.js";
 import { Button, Loading, ErrorBox, Empty, Pill, Tag, Tabs, Card, Chart, Slider, Field, Input, Select, Toggle, confirm, Callout, IconButton, openModal, ModalHeader, Table, CopyButton, Menu, MenuItem, MenuSep, cx, Dot, DefList } from "../ui/kit.js";
 import { Icon } from "../ui/icons.js";
 import { ImageBadge } from "../ui/art.js";
@@ -33,7 +33,7 @@ export function AppPage({ org, id }: { org: string; id: string }) {
   if (r.error) return <div class="page"><ErrorBox error={r.error} onRetry={r.reload} /></div>;
   if (!r.data) return <div class="page"><Loading /></div>;
   const a = r.data;
-  const url = a.domains?.length ? "https://" + (a.domains.find((d: any) => !d.generated) || a.domains[0]).host : "";
+  const url = a.domains?.length ? appURL((a.domains.find((d: any) => !d.generated) || a.domains[0]).host) : "";
   const deploy = async () => {
     const res = await act(() => post(`/apps/${id}/deploy`));
     if (res) {
@@ -200,7 +200,7 @@ function Overview({ a, metrics, org }: { a: any; metrics: any[]; org: string }) 
             <DefList rows={[
               ["Internal", <><span class="truncate">{a.name}</span><CopyButton text={a.internalHost} size="sm" label="" /></>],
               ...(a.ports || []).map((p: any) => [p.name || "port", `${p.port}/${p.protocol}${p.public && p.nodePort ? ` → ${a.publicIp || "public"}:${p.nodePort}` : ""}`] as [any, any]),
-              ...(a.domains || []).slice(0, 2).map((d: any) => ["URL", <a href={"https://" + d.host} target="_blank" rel="noopener">{d.host}</a>] as [any, any]),
+              ...(a.domains || []).slice(0, 2).map((d: any) => ["URL", <a href={appURL(d.host)} target="_blank" rel="noopener">{d.host}</a>] as [any, any]),
             ]} />
           </Card>
         </div>
@@ -310,7 +310,7 @@ function Domains({ a, reload }: { a: any; reload: () => void }) {
         {a.domains.length === 0 ? <div class="muted" style={{ padding: 18 }}>No domains.</div> : a.domains.map((d: any) => (
           <div class="domain-row" key={d.host} style={{ padding: "12px 16px" }}>
             <Icon name={d.generated ? "globe" : "link"} class="muted" />
-            <a href={"https://" + d.host} target="_blank" rel="noopener" class="grow mono" style={{ fontSize: 13.5 }}>{d.host}</a>
+            <a href={appURL(d.host)} target="_blank" rel="noopener" class="grow mono" style={{ fontSize: 13.5 }}>{d.host}</a>
             {d.generated ? <Tag>generated</Tag> : null}
             <Pill status={d.certState === "issued" ? "active" : d.certState === "failed" ? "failed" : "provisioning"} label={d.certState === "issued" ? "HTTPS" : d.certState === "failed" ? "Certificate failed" : "Issuing certificate"} />
             {a.canEdit && !d.generated ? <IconButton icon="trash" title="Remove domain" onClick={async () => {

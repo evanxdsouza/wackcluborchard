@@ -1,7 +1,7 @@
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
-.PHONY: all web build dev test vet image clean
+.PHONY: all web build dev quickstart test vet image clean
 
 all: web build
 
@@ -17,6 +17,10 @@ build:
 # shows up on reload.
 dev: web
 	go run ./cmd/wackcluborchard-server -runtime sim -data ./data -web ./web/dist
+
+# Real k3d cluster with the chart and dev values.
+quickstart:
+	./scripts/quickstart.sh
 
 test:
 	go test ./...

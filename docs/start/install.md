@@ -125,6 +125,42 @@ server:
 
 Every variable the server reads is in [Configuration](../reference/configuration.md).
 
+## Trying it on a laptop
+
+For a throwaway local cluster:
+
+```bash
+./scripts/quickstart.sh
+```
+
+It creates a k3d cluster (one server, one agent) with a local registry,
+installs the prerequisites (Gateway API CRDs, Traefik's Gateway provider,
+cert-manager with a self-signed issuer, CloudNativePG), builds the server
+image from your checkout, and deploys the chart with
+[`values-dev.yaml`](../../deploy/helm/wackcluborchard/values-dev.yaml). It
+needs docker (running), `k3d`, `kubectl` and `helm`, and ends by printing a
+claim link.
+
+| | |
+|---|---|
+| Dashboard | `http://wackcluborchard.localhost:8080` |
+| Apps | `https://<app>.apps.localhost:8443` (self-signed certificate) |
+| Registry | `localhost:5050`, `k3d-wackcluborchard-registry:5000` in the cluster |
+
+`*.localhost` resolves to your machine without any DNS setup.
+
+```bash
+./scripts/quickstart.sh reload   # rebuild the image from this checkout and roll it out
+./scripts/quickstart.sh claim    # mint another claim link
+./scripts/quickstart.sh down     # delete the cluster and the registry
+```
+
+Ports and versions are overridable with `WACKCLUBORCHARD_HTTP_PORT`,
+`WACKCLUBORCHARD_HTTPS_PORT`, `WACKCLUBORCHARD_REGISTRY_PORT`,
+`WACKCLUBORCHARD_CLUSTER`, `GATEWAY_API_VERSION`, `CERT_MANAGER_VERSION` and
+`CNPG_CHART_VERSION`. Without any cluster at all, `go run
+./cmd/wackcluborchard-server` runs against the simulated runtime instead.
+
 ## Claiming the instance
 
 A fresh install has no superadmin. On first boot the server mints a

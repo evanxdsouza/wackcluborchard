@@ -1,7 +1,7 @@
 import { h, Fragment, useEffect, useState } from "../lib/sprout.js";
 import { Link, navigate, query, setQuery } from "../lib/router.js";
 import { useApi, useEvents, post, patch, del, act, get } from "../lib/api.js";
-import { timeAgo, duration, cpu, mem, plural, shortSha, dateTime } from "../lib/format.js";
+import { timeAgo, duration, cpu, mem, plural, shortSha, dateTime, appURL } from "../lib/format.js";
 import { Button, Loading, ErrorBox, Empty, Pill, Tag, Tabs, Card, Chart, Slider, Field, Input, Select, Toggle, confirm, Callout, IconButton, openModal, ModalHeader, Table, CopyButton, Menu, MenuItem, MenuSep, cx, Dot, DefList } from "../ui/kit.js";
 import { Icon } from "../ui/icons.js";
 import { ImageBadge } from "../ui/art.js";
@@ -38,7 +38,7 @@ export function AppPage({ org, id }) {
         return h("div", { class: "page" },
             h(Loading, null));
     const a = r.data;
-    const url = a.domains?.length ? "https://" + (a.domains.find((d) => !d.generated) || a.domains[0]).host : "";
+    const url = a.domains?.length ? appURL((a.domains.find((d) => !d.generated) || a.domains[0]).host) : "";
     const deploy = async () => {
         const res = await act(() => post(`/apps/${id}/deploy`));
         if (res) {
@@ -210,7 +210,7 @@ function Overview({ a, metrics, org }) {
                                     h("span", { class: "truncate" }, a.name),
                                     h(CopyButton, { text: a.internalHost, size: "sm", label: "" }))],
                             ...(a.ports || []).map((p) => [p.name || "port", `${p.port}/${p.protocol}${p.public && p.nodePort ? ` → ${a.publicIp || "public"}:${p.nodePort}` : ""}`]),
-                            ...(a.domains || []).slice(0, 2).map((d) => ["URL", h("a", { href: "https://" + d.host, target: "_blank", rel: "noopener" }, d.host)]),
+                            ...(a.domains || []).slice(0, 2).map((d) => ["URL", h("a", { href: appURL(d.host), target: "_blank", rel: "noopener" }, d.host)]),
                         ] }))))));
 }
 function Deploys({ a, org, tick }) {
@@ -309,7 +309,7 @@ function Domains({ a, reload }) {
         !httpPort ? h(Callout, { kind: "amber" }, "This app exposes no HTTP port, so it has no URL. Add one under Settings \u2192 Ports.") : null,
         h(Card, { pad: false }, a.domains.length === 0 ? h("div", { class: "muted", style: { padding: 18 } }, "No domains.") : a.domains.map((d) => (h("div", { class: "domain-row", key: d.host, style: { padding: "12px 16px" } },
             h(Icon, { name: d.generated ? "globe" : "link", class: "muted" }),
-            h("a", { href: "https://" + d.host, target: "_blank", rel: "noopener", class: "grow mono", style: { fontSize: 13.5 } }, d.host),
+            h("a", { href: appURL(d.host), target: "_blank", rel: "noopener", class: "grow mono", style: { fontSize: 13.5 } }, d.host),
             d.generated ? h(Tag, null, "generated") : null,
             h(Pill, { status: d.certState === "issued" ? "active" : d.certState === "failed" ? "failed" : "provisioning", label: d.certState === "issued" ? "HTTPS" : d.certState === "failed" ? "Certificate failed" : "Issuing certificate" }),
             a.canEdit && !d.generated ? h(IconButton, { icon: "trash", title: "Remove domain", onClick: async () => {

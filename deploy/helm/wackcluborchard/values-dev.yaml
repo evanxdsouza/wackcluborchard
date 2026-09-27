@@ -1,0 +1,46 @@
+# Values for a throwaway local cluster (scripts/quickstart.sh, k3d).
+# Everything is reached through k3d's load balancer on localhost; browsers
+# resolve *.localhost to 127.0.0.1 without any DNS setup.
+
+image:
+  repository: wackcluborchard
+  tag: dev
+  pullPolicy: Never        # imported into the cluster with `k3d image import`
+
+ingress:
+  host: wackcluborchard.localhost
+  tls: false
+
+gateway:
+  enabled: true
+  http:
+    appDomain: apps.localhost
+    wildcardIssuer: selfsigned   # apps get a self-signed wildcard certificate
+
+tenant:
+  ingressClass: traefik
+  certClusterIssuer: selfsigned
+
+# Builds push to the k3d-managed registry, which both pods and the nodes'
+# containerd can reach by name.
+registry:
+  enabled: false
+  host: k3d-wackcluborchard-registry:5000
+  insecure: true
+
+persistence:
+  size: 1Gi
+
+signupMode: open
+buildSlots: 1
+
+server:
+  env:
+    - name: FRONTEND_URL
+      value: http://wackcluborchard.localhost:8080
+    - name: INGRESS_MODE
+      value: lan
+    - name: PUBLIC_HTTP_PORT
+      value: "8080"
+    - name: PUBLIC_HTTPS_PORT
+      value: "8443"

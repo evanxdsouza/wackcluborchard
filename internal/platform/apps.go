@@ -386,6 +386,15 @@ func (p *Platform) EnqueueApp(appID string) {
 	})
 }
 
+// AppURL is the public URL for an app hostname, including the HTTPS port
+// when the instance serves apps on a non-standard one (lan mode, k3d).
+func AppURL(st store.Settings, host string) string {
+	if st.HTTPSPort != 0 && st.HTTPSPort != 443 {
+		return fmt.Sprintf("https://%s:%d", host, st.HTTPSPort)
+	}
+	return "https://" + host
+}
+
 var refRe = regexp.MustCompile(`\$\{\{\s*([a-zA-Z0-9_-]+)\.([A-Za-z0-9_]+)\s*\}\}`)
 
 // ResolveVars returns the variables an app sees: project-wide values,
@@ -439,7 +448,7 @@ func ResolveVars(d *store.Data, a *store.App) (env, secrets map[string]string) {
 	env["WACKCLUBORCHARD_APP"] = a.Name
 	for _, dm := range a.Domains {
 		if dm.Generated {
-			env["WACKCLUBORCHARD_URL"] = "https://" + dm.Host
+			env["WACKCLUBORCHARD_URL"] = AppURL(d.Settings, dm.Host)
 		}
 	}
 	return env, secrets
@@ -482,7 +491,7 @@ func interpolate(d *store.Data, projectID, v string) string {
 					return fmt.Sprintf("http://%s:%d", a.Name, port)
 				case "PUBLIC_URL":
 					for _, dm := range a.Domains {
-						return "https://" + dm.Host
+						return AppURL(d.Settings, dm.Host)
 					}
 				}
 			}

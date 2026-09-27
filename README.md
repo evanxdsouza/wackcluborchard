@@ -45,6 +45,14 @@ go run ./cmd/wackcluborchard-server        # http://localhost:8080
 
 Sign up, then open the claim link the server printed to become the instance superadmin. `make dev` does the same with the dashboard served from disk, so `./web/build.sh` shows up on reload.
 
+## A real cluster on your laptop
+
+With docker, k3d, kubectl and helm installed, this creates a k3d cluster, installs the platform layer and deploys the chart with dev values:
+
+```bash
+./scripts/quickstart.sh                   # http://wackcluborchard.localhost:8080
+```
+
 ## Install it for real
 
 On a bare amd64 Linux box (it brings k3s, Traefik with the Gateway API, cert-manager, CloudNativePG and a zot registry):

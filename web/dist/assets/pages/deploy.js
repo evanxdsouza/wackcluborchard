@@ -1,7 +1,7 @@
 import { h, useEffect, useState } from "../lib/sprout.js";
 import { Link } from "../lib/router.js";
 import { useApi, useEvents } from "../lib/api.js";
-import { duration, timeAgo, shortSha } from "../lib/format.js";
+import { duration, timeAgo, shortSha, appURL } from "../lib/format.js";
 import { Loading, ErrorBox, Pill, Callout, cx, Tag } from "../ui/kit.js";
 import { Icon } from "../ui/icons.js";
 import { DeployLog } from "../ui/term.js";
@@ -63,7 +63,7 @@ export function DeployPage({ org, id }) {
                     d.error,
                     " Nothing was torn down: the previous version keeps running. Fix the problem and redeploy; there is nothing to recreate.")) : d.status === "succeeded" ? (h(Callout, { kind: "green", title: "Live." },
                     "Rolled out and passing health checks. ",
-                    app.data?.domains?.[0] ? h("a", { href: "https://" + app.data.domains[0].host, target: "_blank", rel: "noopener" },
+                    app.data?.domains?.[0] ? h("a", { href: appURL(app.data.domains[0].host), target: "_blank", rel: "noopener" },
                         "Open ",
                         app.data.domains[0].host,
                         " \u2197") : null)) : d.status === "queued" ? (h(Callout, { kind: "info", title: "Queued." }, "All build slots are busy. This build starts on its own when one frees up; there is no need to retry.")) : d.status === "superseded" ? (h(Callout, { kind: "info" }, "A newer deploy replaced this one before it started.")) : null,

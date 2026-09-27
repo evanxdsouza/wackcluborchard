@@ -28,6 +28,7 @@ jobs:
       - name: dashboard type-check and build
         run: ./web/build.sh
       - run: bash -n deploy/install.sh
+      - run: bash -n scripts/quickstart.sh
 
   image:
     needs: test

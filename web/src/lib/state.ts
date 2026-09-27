@@ -57,6 +57,7 @@ export interface AuthState {
   runtime: string;
   version: string;
   appDomain: string;
+  httpsPort: number;
   needsCredential: boolean;
   secureContext: boolean;
 }

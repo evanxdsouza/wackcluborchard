@@ -1,3 +1,5 @@
+import { session } from "./state.js";
+
 export function timeAgo(iso?: string | null, now = Date.now()): string {
   if (!iso) return "never";
   const t = new Date(iso).getTime();
@@ -71,4 +73,10 @@ export function copyText(text: string) {
   document.execCommand("copy");
   ta.remove();
   return Promise.resolve();
+}
+
+/** Public URL for an app hostname, with the instance's HTTPS port if it is not 443. */
+export function appURL(host: string): string {
+  const port = session.get().auth?.httpsPort;
+  return port && port !== 443 ? `https://${host}:${port}` : `https://${host}`;
 }

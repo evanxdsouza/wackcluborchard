@@ -1,7 +1,7 @@
 import { h, Fragment, useEffect, useState } from "../lib/sprout.js";
 import { Link } from "../lib/router.js";
 import { useApi, useEvents } from "../lib/api.js";
-import { duration, timeAgo, shortSha } from "../lib/format.js";
+import { duration, timeAgo, shortSha, appURL } from "../lib/format.js";
 import { Loading, ErrorBox, Pill, Card, Callout, cx, Tag } from "../ui/kit.js";
 import { Icon } from "../ui/icons.js";
 import { DeployLog } from "../ui/term.js";
@@ -54,7 +54,7 @@ export function DeployPage({ org, id }: { org: string; id: string }) {
             </Callout>
           ) : d.status === "succeeded" ? (
             <Callout kind="green" title="Live.">
-              Rolled out and passing health checks. {app.data?.domains?.[0] ? <a href={"https://" + app.data.domains[0].host} target="_blank" rel="noopener">Open {app.data.domains[0].host} ↗</a> : null}
+              Rolled out and passing health checks. {app.data?.domains?.[0] ? <a href={appURL(app.data.domains[0].host)} target="_blank" rel="noopener">Open {app.data.domains[0].host} ↗</a> : null}
             </Callout>
           ) : d.status === "queued" ? (
             <Callout kind="info" title="Queued.">All build slots are busy. This build starts on its own when one frees up; there is no need to retry.</Callout>

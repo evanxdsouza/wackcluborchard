@@ -82,6 +82,7 @@ func (s *Server) authState(w http.ResponseWriter, r *http.Request) {
 		Runtime      string      `json:"runtime"`
 		Version      string      `json:"version"`
 		AppDomain    string      `json:"appDomain"`
+		HTTPSPort    int         `json:"httpsPort"`
 		NeedsPasskey bool        `json:"needsCredential"`
 		Secure       bool        `json:"secureContext"`
 	}
@@ -91,6 +92,7 @@ func (s *Server) authState(w http.ResponseWriter, r *http.Request) {
 		out.GitHub = d.Settings.GitHub.ClientID != ""
 		out.FirstUser = len(d.Users) == 0
 		out.AppDomain = d.Settings.AppDomain
+		out.HTTPSPort = d.Settings.HTTPSPort
 		hasSuper := false
 		for _, x := range d.Users {
 			if x.Superadmin {

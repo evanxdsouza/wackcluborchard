@@ -249,7 +249,7 @@ func main() {
 		if len(a.Domains) == 0 {
 			die("%s has no URL", a.Name)
 		}
-		u := "https://" + a.Domains[0].Host
+		u := appURL(c, a.Domains[0].Host)
 		fmt.Println(u)
 		openBrowser(u)
 	case "env":
@@ -445,7 +445,7 @@ func listApps(c *client) {
 			}
 			u := ""
 			if len(a.Domains) > 0 {
-				u = "https://" + a.Domains[0].Host
+				u = appURL(c, a.Domains[0].Host)
 			}
 			fmt.Fprintf(tw, "%s\t%s\tapp\t%s\t%s\t%s\n", p.Name, a.Name, a.Status, src, u)
 		}
@@ -801,4 +801,15 @@ func openBrowser(u string) {
 		cmd = "xdg-open"
 	}
 	exec.Command(cmd, u).Start()
+}
+
+// appURL adds the instance's HTTPS port when it is not 443 (lan mode, k3d).
+func appURL(c *client, host string) string {
+	var st struct {
+		HTTPSPort int `json:"httpsPort"`
+	}
+	if c.do("GET", "/auth/state", nil, &st) == nil && st.HTTPSPort != 0 && st.HTTPSPort != 443 {
+		return fmt.Sprintf("https://%s:%d", host, st.HTTPSPort)
+	}
+	return "https://" + host
 }
