@@ -3,10 +3,10 @@
 | Component | What it is |
 | --- | --- |
 | **Server** | One Go binary: API, dashboard, SSE, WebSocket terminals, MCP, build queue, job scheduler, informers. Standard library only |
-| **State** | An in-memory document store snapshotted atomically to a volume (`/data/orchard.json`) |
+| **State** | An in-memory document store snapshotted atomically to a volume (`/data/wackcluborchard.json`) |
 | **Builders** | Kubernetes Jobs: an `alpine/git` clone init container and rootless BuildKit |
-| **Registry** | zot, for images Orchard builds (or your own) |
-| **Tenant namespaces** | `orchard-<org>-<project>`: apps, databases, jobs; `orchard-<org>-greenhouse`: sandboxes |
+| **Registry** | zot, for images Wack Club Orchard builds (or your own) |
+| **Tenant namespaces** | `wackcluborchard-<org>-<project>`: apps, databases, jobs; `wackcluborchard-<org>-greenhouse`: sandboxes |
 
 ```
 Browser / CLI / MCP ──▶ API ──reads──▶ state (mirror)
@@ -28,8 +28,8 @@ the cluster wins: the mirror is a cache of reality.
 Cluster writes go through a **retrying apply queue** keyed per object. A deploy
 records intent and returns; the queue reconciles, retrying with backoff, and a
 newer desired state supersedes a retry in progress. Every write is a
-**server-side apply** with field manager `orchard`, so changes made with
-`kubectl` to fields Orchard does not own are left alone.
+**server-side apply** with field manager `wackcluborchard`, so changes made with
+`kubectl` to fields Wack Club Orchard does not own are left alone.
 
 ## Events
 

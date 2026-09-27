@@ -208,7 +208,7 @@ function NewSandbox({ org, close }: { org: string; close: () => void }) {
       <ModalHeader title="New sandbox" subtitle="A persistent workspace in its own micro-VM." onClose={close} icon="sprout" />
       <div class="modal-body">
         <Field label="Name"><Input value={name} onInput={(v) => setName(v.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} autofocus mono placeholder="scratch" /></Field>
-        <Field label="Repository" hint="Optional. owner/name, cloned into /workspace on first boot."><Input value={repo} onInput={setRepo} mono placeholder="hackclub/orchard" /></Field>
+        <Field label="Repository" hint="Optional. owner/name, cloned into /workspace on first boot."><Input value={repo} onInput={setRepo} mono placeholder="hackclub/wackcluborchard" /></Field>
         <Field label="Image" hint="Optional. Defaults to a devcontainer with common toolchains."><Input value={image} onInput={setImage} mono placeholder="mcr.microsoft.com/devcontainers/universal:2-linux" /></Field>
       </div>
       <div class="modal-foot">

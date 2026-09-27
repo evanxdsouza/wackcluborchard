@@ -158,7 +158,7 @@ function ListRow({ href, image, name, sub, status, right }: { href: string; imag
 }
 
 function ProjectGroup({ p, org, filter, view }: { p: any; org: string; filter: string; view: string }) {
-  const key = "orchard-collapsed-" + p.id;
+  const key = "wackcluborchard-collapsed-" + p.id;
   const [collapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem(key) === "1";
@@ -257,7 +257,7 @@ export function AppsPage({ org }: { org: string }) {
   const [filter, setFilter] = useState("");
   const [view, setView] = useState(() => {
     try {
-      return localStorage.getItem("orchard-view") || "grid";
+      return localStorage.getItem("wackcluborchard-view") || "grid";
     } catch {
       return "grid";
     }
@@ -298,7 +298,7 @@ export function AppsPage({ org }: { org: string }) {
               onChange={(v) => {
                 setView(v);
                 try {
-                  localStorage.setItem("orchard-view", v);
+                  localStorage.setItem("wackcluborchard-view", v);
                 } catch {}
               }}
               options={[{ id: "list", label: "", icon: "list", title: "List" }, { id: "grid", label: "", icon: "grid", title: "Cards" }]}

@@ -19,7 +19,7 @@ import (
 
 // Sim is an in-process fake cluster. Pods start and become ready, images
 // produce plausible logs, databases provision, builds stream BuildKit-ish
-// output. Set ORCHARD_SIM_EXEC=1 to run job script steps for real with the
+// output. Set WACKCLUBORCHARD_SIM_EXEC=1 to run job script steps for real with the
 // local interpreters (development only: there is no isolation).
 type Sim struct {
 	mu        sync.Mutex
@@ -62,11 +62,11 @@ func NewSim() *Sim {
 		sandboxes: map[string]*simSandbox{},
 		logs:      events.NewLogHub(),
 		prevLogs:  map[string]string{},
-		realExec:  os.Getenv("ORCHARD_SIM_EXEC") == "1",
+		realExec:  os.Getenv("WACKCLUBORCHARD_SIM_EXEC") == "1",
 		nodes: []Node{
-			{Name: "orchard-control-1", Ready: true, Roles: []string{"control-plane", "master"}, CPUMillis: 8000, MemoryMi: 32768, AllocCPU: 7800, AllocMem: 31200, Arch: "amd64", Kubelet: "v1.31.4+k3s1", Labels: map[string]string{"kubernetes.io/arch": "amd64"}},
-			{Name: "orchard-worker-1", Ready: true, Roles: []string{"worker"}, CPUMillis: 16000, MemoryMi: 65536, AllocCPU: 15800, AllocMem: 63900, Arch: "amd64", Kubelet: "v1.31.4+k3s1", Labels: map[string]string{"kubernetes.io/arch": "amd64"}},
-			{Name: "orchard-worker-2", Ready: true, Roles: []string{"worker"}, CPUMillis: 16000, MemoryMi: 65536, AllocCPU: 15800, AllocMem: 63900, Arch: "amd64", Kubelet: "v1.31.4+k3s1", Labels: map[string]string{"kubernetes.io/arch": "amd64"}},
+			{Name: "wackcluborchard-control-1", Ready: true, Roles: []string{"control-plane", "master"}, CPUMillis: 8000, MemoryMi: 32768, AllocCPU: 7800, AllocMem: 31200, Arch: "amd64", Kubelet: "v1.31.4+k3s1", Labels: map[string]string{"kubernetes.io/arch": "amd64"}},
+			{Name: "wackcluborchard-worker-1", Ready: true, Roles: []string{"worker"}, CPUMillis: 16000, MemoryMi: 65536, AllocCPU: 15800, AllocMem: 63900, Arch: "amd64", Kubelet: "v1.31.4+k3s1", Labels: map[string]string{"kubernetes.io/arch": "amd64"}},
+			{Name: "wackcluborchard-worker-2", Ready: true, Roles: []string{"worker"}, CPUMillis: 16000, MemoryMi: 65536, AllocCPU: 15800, AllocMem: 63900, Arch: "amd64", Kubelet: "v1.31.4+k3s1", Labels: map[string]string{"kubernetes.io/arch": "amd64"}},
 		},
 	}
 }
@@ -1196,28 +1196,28 @@ func (s *Sim) SandboxExec(ctx context.Context, ns, name string, cmd []string, io
 	}
 	w := io.Stdout
 	if len(cmd) == 0 {
-		return fakeShell(ctx, io, name, map[string]string{"HOME": "/workspace", "USER": "orchard"}, map[string]string{})
+		return fakeShell(ctx, io, name, map[string]string{"HOME": "/workspace", "USER": "wackcluborchard"}, map[string]string{})
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	switch cmd[0] {
-	case "orchard-ls":
+	case "wackcluborchard-ls":
 		paths := make([]string, 0, len(sb.files))
 		for p := range sb.files {
 			paths = append(paths, p)
 		}
 		sort.Strings(paths)
 		fmt.Fprint(w, strings.Join(paths, "\n"))
-	case "orchard-read":
+	case "wackcluborchard-read":
 		c, ok := sb.files[cmd[1]]
 		if !ok {
 			return fmt.Errorf("no such file: %s", cmd[1])
 		}
 		fmt.Fprint(w, c)
-	case "orchard-write":
+	case "wackcluborchard-write":
 		b, _ := readAll(io.Stdin)
 		sb.files[cmd[1]] = string(b)
-	case "orchard-rm":
+	case "wackcluborchard-rm":
 		delete(sb.files, cmd[1])
 	case "git":
 		fmt.Fprint(w, simGit(cmd[1:], sb))
@@ -1300,11 +1300,11 @@ func (s *Sim) SetNodePool(ctx context.Context, node, pool string, taint bool) er
 			}
 			s.nodes[i].Taints = nil
 			if pool == "" {
-				delete(s.nodes[i].Labels, "orchard.dev/pool")
+				delete(s.nodes[i].Labels, "wackcluborchard.dev/pool")
 			} else {
-				s.nodes[i].Labels["orchard.dev/pool"] = pool
+				s.nodes[i].Labels["wackcluborchard.dev/pool"] = pool
 				if taint {
-					s.nodes[i].Taints = []string{"orchard.dev/pool=" + pool + ":NoSchedule"}
+					s.nodes[i].Taints = []string{"wackcluborchard.dev/pool=" + pool + ":NoSchedule"}
 				}
 			}
 			return nil

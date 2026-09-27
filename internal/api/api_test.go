@@ -24,7 +24,7 @@ type harness struct {
 }
 
 func newHarness(t *testing.T) *harness {
-	t.Setenv("ORCHARD_QUIET", "1")
+	t.Setenv("WACKCLUBORCHARD_QUIET", "1")
 	st, err := store.Open("")
 	if err != nil {
 		t.Fatal(err)
@@ -139,7 +139,7 @@ func TestDeployFlowAndIsolation(t *testing.T) {
 	// the database reference resolves to a real URI
 	h.st.Read(func(d *store.Data) {
 		env, _ := platform.ResolveVars(d, d.Apps[app.ID])
-		if !strings.HasPrefix(env["DATABASE_URL"], "postgresql://u_orchard_alice_homelab_main:") || !strings.Contains(env["DATABASE_URL"], "pg-main-rw.orchard-alice-homelab.svc.cluster.local:5432") {
+		if !strings.HasPrefix(env["DATABASE_URL"], "postgresql://u_wackcluborchard_alice_homelab_main:") || !strings.Contains(env["DATABASE_URL"], "pg-main-rw.wackcluborchard-alice-homelab.svc.cluster.local:5432") {
 			t.Fatalf("DATABASE_URL = %q", env["DATABASE_URL"])
 		}
 		if env["PORT"] != "80" {

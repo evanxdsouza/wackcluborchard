@@ -159,7 +159,7 @@ func newClient(server, token string, conf *tls.Config) *Client {
 		tls:    conf,
 		http:   &http.Client{Transport: tr, Timeout: 60 * time.Second},
 		stream: &http.Client{Transport: tr},
-		Field:  "orchard",
+		Field:  "wackcluborchard",
 	}
 }
 
@@ -268,7 +268,7 @@ func (c *Client) do(ctx context.Context, method, path, contentType string, body 
 	return nil
 }
 
-// Apply server-side-applies obj, forcing ownership of the fields Orchard
+// Apply server-side-applies obj, forcing ownership of the fields Wack Club Orchard
 // manages. obj must carry apiVersion, kind and metadata.name.
 func (c *Client) Apply(ctx context.Context, obj Obj) (Obj, error) {
 	kindName, _ := obj["kind"].(string)

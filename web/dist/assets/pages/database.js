@@ -184,7 +184,7 @@ function DbTerminal({ d }) {
     const cr = useApi(sub === "killed" ? `/databases/${d.id}/crashes` : null, [sub]);
     return (h("div", { class: "col" },
         h(Segmented, { value: sub, onChange: setSub, options: [{ id: "psql", label: "psql", icon: "terminal" }, { id: "killed", label: "Killed", icon: "skull" }] }),
-        sub === "psql" ? (d.canEdit ? (d.status === "ready" ? h(Terminal, { path: `/databases/${d.id}/terminal`, title: `psql · ${d.dbName}`, prompt: d.dbName + "=>", height: 440 }) : h(Callout, { kind: "amber" }, "The database must be running to open a terminal.")) : h(Callout, { kind: "info" }, "Only project members can open a terminal.")) : !cr.data ? h(Loading, null) : cr.data.length === 0 ? (h(Empty, { icon: "check", title: "Nothing killed" }, "A Postgres container that gets OOMKilled is replaced fast enough that its logs are usually gone before anyone looks. Orchard keeps them here.")) : cr.data.map((c) => (h(Card, { key: c.id },
+        sub === "psql" ? (d.canEdit ? (d.status === "ready" ? h(Terminal, { path: `/databases/${d.id}/terminal`, title: `psql · ${d.dbName}`, prompt: d.dbName + "=>", height: 440 }) : h(Callout, { kind: "amber" }, "The database must be running to open a terminal.")) : h(Callout, { kind: "info" }, "Only project members can open a terminal.")) : !cr.data ? h(Loading, null) : cr.data.length === 0 ? (h(Empty, { icon: "check", title: "Nothing killed" }, "A Postgres container that gets OOMKilled is replaced fast enough that its logs are usually gone before anyone looks. Wack Club Orchard keeps them here.")) : cr.data.map((c) => (h(Card, { key: c.id },
             h("div", { class: "row", style: { marginBottom: 10 } },
                 h("strong", null, c.reason),
                 h("span", { class: "muted" },
@@ -219,7 +219,7 @@ function Queries({ d }) {
     const [busy, setBusy] = useState(false);
     const [history, setHistory] = useState(() => {
         try {
-            return JSON.parse(localStorage.getItem("orchard-sql-" + d.id) || "[]");
+            return JSON.parse(localStorage.getItem("wackcluborchard-sql-" + d.id) || "[]");
         }
         catch {
             return [];
@@ -235,7 +235,7 @@ function Queries({ d }) {
         const h = [sql, ...history.filter((x) => x !== sql)].slice(0, 15);
         setHistory(h);
         try {
-            localStorage.setItem("orchard-sql-" + d.id, JSON.stringify(h));
+            localStorage.setItem("wackcluborchard-sql-" + d.id, JSON.stringify(h));
         }
         catch { }
     };

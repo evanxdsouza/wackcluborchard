@@ -1,15 +1,15 @@
-{{- define "orchard.labels" -}}
-app.kubernetes.io/name: orchard
+{{- define "wackcluborchard.labels" -}}
+app.kubernetes.io/name: wackcluborchard
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
-{{- define "orchard.image" -}}
+{{- define "wackcluborchard.image" -}}
 {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
 {{- end -}}
 
-{{- define "orchard.registryHost" -}}
+{{- define "wackcluborchard.registryHost" -}}
 {{- if .Values.registry.host -}}
 {{ .Values.registry.host }}
 {{- else -}}

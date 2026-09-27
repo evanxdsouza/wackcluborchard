@@ -14,16 +14,16 @@ COPY go.mod ./
 COPY . .
 COPY --from=web /src/web/dist ./web/dist
 ARG VERSION=dev
-RUN CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/orchard-server ./cmd/orchard-server \
- && CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/orchard ./cmd/orchard \
- && CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/orchardctl ./cmd/orchardctl
+RUN CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/wackcluborchard-server ./cmd/wackcluborchard-server \
+ && CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/wackcluborchard ./cmd/wackcluborchard \
+ && CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/wackcluborchardctl ./cmd/wackcluborchardctl
 
 # 3. runtime
 FROM alpine:3.20
-RUN apk add --no-cache ca-certificates tzdata && adduser -D -u 10001 orchard && mkdir /data && chown orchard /data
+RUN apk add --no-cache ca-certificates tzdata && adduser -D -u 10001 wackcluborchard && mkdir /data && chown wackcluborchard /data
 COPY --from=build /out/ /usr/local/bin/
-USER orchard
-ENV ORCHARD_DATA=/data PORT=8080
+USER wackcluborchard
+ENV WACKCLUBORCHARD_DATA=/data PORT=8080
 VOLUME /data
 EXPOSE 8080
-ENTRYPOINT ["orchard-server"]
+ENTRYPOINT ["wackcluborchard-server"]

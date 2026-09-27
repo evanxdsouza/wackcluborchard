@@ -1,4 +1,4 @@
-# Wack Club Orchard. The chart installs Orchard's own components and no
+# Wack Club Orchard. The chart installs Wack Club Orchard's own components and no
 # cluster operators: bring CloudNativePG, Traefik with Gateway API,
 # cert-manager, a default StorageClass and (unless registry.enabled) an
 # OCI registry.
@@ -11,8 +11,8 @@ image:
 # Where the dashboard lives.
 ingress:
   enabled: true
-  host: orchard.example.com
-  extraHosts: []     # more names Traefik should answer for (orchardctl hostname add)
+  host: wackcluborchard.example.com
+  extraHosts: []     # more names Traefik should answer for (wackcluborchardctl hostname add)
   className: traefik
   tls: true
   certClusterIssuer: letsencrypt-prod
@@ -21,11 +21,11 @@ ingress:
 # with a wildcard certificate (DNS-01).
 gateway:
   enabled: true
-  name: orchard
+  name: wackcluborchard
   className: traefik
   http:
     appDomain: apps.example.com
-    wildcardSecret: orchard-apps-wildcard
+    wildcardSecret: wackcluborchard-apps-wildcard
     wildcardIssuer: letsencrypt-dns
 
 # Custom domains on user apps become Ingresses with these settings.
@@ -69,4 +69,4 @@ server:
   # public ports here; see docs/reference/configuration.md.
   env:
     - name: FRONTEND_URL
-      value: https://orchard.example.com
+      value: https://wackcluborchard.example.com

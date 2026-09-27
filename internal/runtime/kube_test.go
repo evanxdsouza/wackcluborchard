@@ -28,7 +28,7 @@ func (f *fakeAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer f.mu.Unlock()
 	switch r.Method {
 	case http.MethodPatch:
-		if r.Header.Get("Content-Type") != "application/apply-patch+yaml" || !strings.Contains(r.URL.RawQuery, "fieldManager=orchard") {
+		if r.Header.Get("Content-Type") != "application/apply-patch+yaml" || !strings.Contains(r.URL.RawQuery, "fieldManager=wackcluborchard") {
 			http.Error(w, "expected server-side apply", 400)
 			return
 		}
@@ -76,7 +76,7 @@ users:
 func TestApplyAppManifests(t *testing.T) {
 	f, k := newFake(t)
 	err := k.ApplyApp(context.Background(), AppSpec{
-		Namespace: "orchard-wc-homelab", Name: "api", ID: "app_1", Org: "wc", Pool: "gpu",
+		Namespace: "wackcluborchard-wc-homelab", Name: "api", ID: "app_1", Org: "wc", Pool: "gpu",
 		Image: "registry/api:3", Replicas: 2,
 		Ports:     []store.Port{{Name: "http", Port: 3000, Protocol: "http"}, {Name: "game", Port: 25565, Protocol: "tcp", Public: true}},
 		Env:       map[string]string{"PORT": "3000"},
@@ -89,7 +89,7 @@ func TestApplyAppManifests(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	dep := f.applied["/apis/apps/v1/namespaces/orchard-wc-homelab/deployments/api"]
+	dep := f.applied["/apis/apps/v1/namespaces/wackcluborchard-wc-homelab/deployments/api"]
 	if dep == nil {
 		t.Fatalf("no deployment applied; got %v", keys(f.applied))
 	}
@@ -100,25 +100,25 @@ func TestApplyAppManifests(t *testing.T) {
 	if kube.Str(c, "readinessProbe", "httpGet", "path") != "/healthz" {
 		t.Fatalf("readiness probe: %v", c["readinessProbe"])
 	}
-	if kube.Str(dep, "spec", "template", "spec", "nodeSelector", "orchard.dev/pool") != "gpu" {
+	if kube.Str(dep, "spec", "template", "spec", "nodeSelector", "wackcluborchard.dev/pool") != "gpu" {
 		t.Fatal("pool node selector missing")
 	}
-	route := f.applied["/apis/gateway.networking.k8s.io/v1/namespaces/orchard-wc-homelab/httproutes/api"]
+	route := f.applied["/apis/gateway.networking.k8s.io/v1/namespaces/wackcluborchard-wc-homelab/httproutes/api"]
 	if route == nil || kube.Get(route, "spec", "hostnames").([]any)[0] != "api.apps.test" {
 		t.Fatalf("httproute: %v", route)
 	}
 	if kube.Get(route, "spec", "rules").([]any)[0].(map[string]any)["filters"] == nil {
 		t.Fatal("auth wall filter missing on the route")
 	}
-	ing := f.applied["/apis/networking.k8s.io/v1/namespaces/orchard-wc-homelab/ingresses/api"]
+	ing := f.applied["/apis/networking.k8s.io/v1/namespaces/wackcluborchard-wc-homelab/ingresses/api"]
 	if ing == nil || kube.Str(ing, "metadata", "annotations", "cert-manager.io/cluster-issuer") == "" {
 		t.Fatalf("custom domain ingress: %v", ing)
 	}
-	pub := f.applied["/api/v1/namespaces/orchard-wc-homelab/services/api-public"]
+	pub := f.applied["/api/v1/namespaces/wackcluborchard-wc-homelab/services/api-public"]
 	if pub == nil || kube.Str(pub, "spec", "type") != "NodePort" {
 		t.Fatalf("public tcp service: %v", pub)
 	}
-	sec := f.applied["/api/v1/namespaces/orchard-wc-homelab/secrets/api-env"]
+	sec := f.applied["/api/v1/namespaces/wackcluborchard-wc-homelab/secrets/api-env"]
 	if kube.Str(sec, "stringData", "TOKEN") != "x" || kube.Str(sec, "stringData", "PORT") != "3000" {
 		t.Fatalf("env secret: %v", sec)
 	}

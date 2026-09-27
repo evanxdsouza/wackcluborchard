@@ -40,8 +40,8 @@ func authData(rpID string, flags byte, count uint32) []byte {
 }
 
 func TestPasskeyRoundTrip(t *testing.T) {
-	const rp = "orchard.example.com"
-	origins := []string{"https://orchard.example.com"}
+	const rp = "wackcluborchard.example.com"
+	origins := []string{"https://wackcluborchard.example.com"}
 	key, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	spki, _ := x509.MarshalPKIXPublicKey(&key.PublicKey)
 

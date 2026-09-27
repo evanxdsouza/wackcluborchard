@@ -8,7 +8,7 @@ reads the **previous** container: the one that died.
 
 ## Crash reports
 
-When a container is killed, Orchard captures its last 300 lines before
+When a container is killed, Wack Club Orchard captures its last 300 lines before
 Kubernetes throws them away, OOM kills included, under **Observe → Crash
 reports**. Databases get the same under **Terminal → Killed**.
 

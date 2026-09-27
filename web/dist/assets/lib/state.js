@@ -39,7 +39,7 @@ export function toast(text, kind = "info") {
 }
 function readTheme() {
     try {
-        return localStorage.getItem("orchard-theme") || "system";
+        return localStorage.getItem("wackcluborchard-theme") || "system";
     }
     catch {
         return "system";
@@ -53,7 +53,7 @@ export function applyTheme() {
 }
 theme.subscribe(() => {
     try {
-        localStorage.setItem("orchard-theme", theme.get());
+        localStorage.setItem("wackcluborchard-theme", theme.get());
     }
     catch { }
     applyTheme();
@@ -61,7 +61,7 @@ theme.subscribe(() => {
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
 function readCollapsed() {
     try {
-        return localStorage.getItem("orchard-sidebar") === "collapsed";
+        return localStorage.getItem("wackcluborchard-sidebar") === "collapsed";
     }
     catch {
         return false;
@@ -70,7 +70,7 @@ function readCollapsed() {
 export const sidebarCollapsed = new Store(readCollapsed());
 sidebarCollapsed.subscribe(() => {
     try {
-        localStorage.setItem("orchard-sidebar", sidebarCollapsed.get() ? "collapsed" : "open");
+        localStorage.setItem("wackcluborchard-sidebar", sidebarCollapsed.get() ? "collapsed" : "open");
     }
     catch { }
 });
@@ -80,7 +80,7 @@ export function currentOrgSlug() {
     if (m)
         return decodeURIComponent(m[1]);
     try {
-        return localStorage.getItem("orchard-org");
+        return localStorage.getItem("wackcluborchard-org");
     }
     catch {
         return null;
@@ -88,7 +88,7 @@ export function currentOrgSlug() {
 }
 export function rememberOrg(slug) {
     try {
-        localStorage.setItem("orchard-org", slug);
+        localStorage.setItem("wackcluborchard-org", slug);
     }
     catch { }
 }

@@ -9,14 +9,14 @@ web:
 	./web/build.sh
 
 build:
-	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/orchard-server ./cmd/orchard-server
-	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/orchard ./cmd/orchard
-	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/orchardctl ./cmd/orchardctl
+	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/wackcluborchard-server ./cmd/wackcluborchard-server
+	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/wackcluborchard ./cmd/wackcluborchard
+	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/wackcluborchardctl ./cmd/wackcluborchardctl
 
 # Simulated cluster, demo data, frontend served from disk so a web rebuild
 # shows up on reload.
 dev: web
-	go run ./cmd/orchard-server -runtime sim -data ./data -web ./web/dist
+	go run ./cmd/wackcluborchard-server -runtime sim -data ./data -web ./web/dist
 
 test:
 	go test ./...

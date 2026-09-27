@@ -465,8 +465,8 @@ func (s *Server) mcp(w http.ResponseWriter, r *http.Request) {
 	}
 	u := userOf(r)
 	if u == nil {
-		w.Header().Set("WWW-Authenticate", `Bearer realm="orchard", error="invalid_token"`)
-		writeErr(w, 401, "authenticate with a personal API token: Authorization: Bearer orch_…")
+		w.Header().Set("WWW-Authenticate", `Bearer realm="wackcluborchard", error="invalid_token"`)
+		writeErr(w, 401, "authenticate with a personal API token: Authorization: Bearer wackclubwackcluborchard_…")
 		return
 	}
 	var enabled bool
@@ -507,7 +507,7 @@ func (s *Server) mcp(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(202)
 		return
 	}
-	w.Header().Set("Mcp-Session-Id", "orchard")
+	w.Header().Set("Mcp-Session-Id", "wackcluborchard")
 	writeJSON(w, 200, res)
 }
 

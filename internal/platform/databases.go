@@ -83,7 +83,7 @@ func (p *Platform) CreateDatabase(user *store.User, projectID string, in Databas
 			return err
 		}
 		org := d.Orgs[pr.OrgID]
-		ident := strings.ReplaceAll(fmt.Sprintf("orchard_%s_%s_%s", org.Slug, pr.Slug, in.Name), "-", "_")
+		ident := strings.ReplaceAll(fmt.Sprintf("wackcluborchard_%s_%s_%s", org.Slug, pr.Slug, in.Name), "-", "_")
 		if len(ident) > 60 {
 			ident = ident[:60]
 		}

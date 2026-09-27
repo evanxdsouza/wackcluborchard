@@ -146,7 +146,7 @@ export function NewAppPage({ org }: { org: string }) {
         <div class="choice-grid">
           <button type="button" class={cx("choice", source === "github" && "active")} onClick={() => setSource("github")}>
             <div class="choice-icon"><Icon name="github" size={18} /></div>
-            <div><div class="choice-title">GitHub repository</div><div class="choice-desc">Orchard reads the Dockerfile, builds on the cluster and redeploys on every push.</div></div>
+            <div><div class="choice-title">GitHub repository</div><div class="choice-desc">Wack Club Orchard reads the Dockerfile, builds on the cluster and redeploys on every push.</div></div>
           </button>
           <button type="button" class={cx("choice", source === "image" && "active")} onClick={() => setSource("image")}>
             <div class="choice-icon"><Icon name="box" size={18} /></div>
@@ -167,7 +167,7 @@ export function NewAppPage({ org }: { org: string }) {
               </Callout>
             ) : !gh.data.login ? (
               <div class="row">
-                <div class="grow muted">Link your GitHub account. Orchard only ever sees the repositories you grant it.</div>
+                <div class="grow muted">Link your GitHub account. Wack Club Orchard only ever sees the repositories you grant it.</div>
                 <Button kind="primary" icon="github" href={`/api/github/connect?next=${encodeURIComponent(location.pathname + location.search)}`}>Connect GitHub</Button>
               </div>
             ) : repo ? (

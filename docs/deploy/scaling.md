@@ -19,7 +19,7 @@ When changing resources through the API, send every field you want to keep.
 ## Health checks
 
 An HTTP path becomes both a readiness probe (no traffic until it passes) and a
-more patient liveness probe. They are part of the Deployment Orchard applies on
+more patient liveness probe. They are part of the Deployment Wack Club Orchard applies on
 every rollout, so a rebuild does not drop them.
 
 ## Quotas

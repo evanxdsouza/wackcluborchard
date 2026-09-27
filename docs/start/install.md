@@ -14,18 +14,18 @@ sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/evanxdsouza/wackclu
 ```
 
 It installs k3s, Traefik with the Gateway API, CloudNativePG, cert-manager, a
-`zot` registry for the images it builds, and Orchard itself. Everything it
-generates lands in `/etc/orchard/values.yaml`; edit that file and run
-`orchard-update` to apply changes.
+`zot` registry for the images it builds, and Wack Club Orchard itself. Everything it
+generates lands in `/etc/wackcluborchard/values.yaml`; edit that file and run
+`wackcluborchard-update` to apply changes.
 
 Run it that way round, not `curl … | sudo bash`: the installer asks questions,
 and piping it into `bash` leaves them nowhere to read your answer from. To read
 it first:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/evanxdsouza/wackcluborchard/main/deploy/install.sh -o orchard-install.sh
-less orchard-install.sh
-sudo bash orchard-install.sh
+curl -fsSL https://raw.githubusercontent.com/evanxdsouza/wackcluborchard/main/deploy/install.sh -o wackcluborchard-install.sh
+less wackcluborchard-install.sh
+sudo bash wackcluborchard-install.sh
 ```
 
 **amd64 only**, and **on a real machine or VM**, not inside a Docker container
@@ -46,21 +46,21 @@ something else owns 80/443, use `tunnel`, or `lan` with custom ports.
 ### What it asks
 
 Your **domain** and an **email for Let's Encrypt** (public mode), the traffic
-**mode**, and whether updates are **manual** (`orchard-update`) or **automatic**
+**mode**, and whether updates are **manual** (`wackcluborchard-update`) or **automatic**
 (a nightly systemd timer). Architecture, memory, disk, ports and NAT are detected.
 It derives `apps.<domain>` for apps and `mcp.<domain>` for the MCP endpoint, and
 checks the MCP name resolves before relying on it; if not, it offers to check
 again, use another name, or skip (turn it on later with
-`sudo orchardctl mcp enable --apply`).
+`sudo wackcluborchardctl mcp enable --apply`).
 
 ### Unattended
 
 ```bash
-ORCHARD_ASSUME_YES=true \
-ORCHARD_DOMAIN=orchard.example.com \
-ORCHARD_ACME_EMAIL=me@example.com \
-ORCHARD_INGRESS_MODE=public \
-ORCHARD_UPDATE_POLICY=manual \
+WACKCLUBORCHARD_ASSUME_YES=true \
+WACKCLUBORCHARD_DOMAIN=wackcluborchard.example.com \
+WACKCLUBORCHARD_ACME_EMAIL=me@example.com \
+WACKCLUBORCHARD_INGRESS_MODE=public \
+WACKCLUBORCHARD_UPDATE_POLICY=manual \
   sudo -E bash install.sh
 ```
 
@@ -82,17 +82,17 @@ The floor is 4Gi RAM and 20G disk; 8Gi and 60G is comfortable.
 
 `lan` mode is the right one for a box you reach over Tailscale. The installer
 answers on every address the machine had, its hostname and `.local` name, and
-`orchard.<ip>.sslip.io`. Add MagicDNS names it could not guess:
+`wackcluborchard.<ip>.sslip.io`. Add MagicDNS names it could not guess:
 
 ```bash
-sudo orchardctl hostname add mango --apply
-sudo orchardctl hostname add mango.tailnet-name.ts.net --apply
+sudo wackcluborchardctl hostname add mango --apply
+sudo wackcluborchardctl hostname add mango.tailnet-name.ts.net --apply
 ```
 
 ## An existing cluster
 
 ```bash
-helm install orchard ./deploy/helm/orchard -n orchard --create-namespace -f my-values.yaml
+helm install wackcluborchard ./deploy/helm/wackcluborchard -n wackcluborchard --create-namespace -f my-values.yaml
 ```
 
 | You bring | Needed for |
@@ -109,7 +109,7 @@ A minimal values file:
 
 ```yaml
 ingress:
-  host: orchard.example.com
+  host: wackcluborchard.example.com
 gateway:
   http:
     appDomain: apps.example.com
@@ -120,7 +120,7 @@ signupMode: invite
 server:
   env:
     - name: FRONTEND_URL
-      value: https://orchard.example.com
+      value: https://wackcluborchard.example.com
 ```
 
 Every variable the server reads is in [Configuration](../reference/configuration.md).
@@ -132,10 +132,10 @@ A fresh install has no superadmin. On first boot the server mints a
 Sign up with the account that should own the instance, then open the link.
 
 ```bash
-sudo orchardctl claim                         # installer boxes
-kubectl -n orchard exec deploy/orchard-server -- orchard-server admin claim --data /data
+sudo wackcluborchardctl claim                         # installer boxes
+kubectl -n wackcluborchard exec deploy/wackcluborchard-server -- wackcluborchard-server admin claim --data /data
 ```
 
 The link is the credential: single use, and it makes you superadmin. **Add a
-passkey or password straight after**; if you lock yourself out, `orchardctl claim`
+passkey or password straight after**; if you lock yourself out, `wackcluborchardctl claim`
 mints a recovery link that signs in as the superadmin.

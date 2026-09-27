@@ -229,7 +229,7 @@ func FileContent(ctx context.Context, token, repo, path, ref string) (string, er
 	return string(b), err
 }
 
-// Inspection is what Orchard learns from a repository's Dockerfile.
+// Inspection is what Wack Club Orchard learns from a repository's Dockerfile.
 type Inspection struct {
 	Dockerfile string   `json:"dockerfile"`
 	Found      bool     `json:"found"`

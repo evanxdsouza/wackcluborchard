@@ -505,7 +505,7 @@ function GitHubLink() {
     <Card class="form-card">
       <div>
         <div class="panel-title">GitHub</div>
-        <div class="panel-desc">Link your account to deploy repositories. Orchard only ever sees the repositories you grant the app.</div>
+        <div class="panel-desc">Link your account to deploy repositories. Wack Club Orchard only ever sees the repositories you grant the app.</div>
       </div>
       {!r.data.configured ? <Callout kind="amber">The instance has no GitHub App yet. An instance admin creates it under Instance admin → GitHub.</Callout> : (
         <div class="row">
@@ -523,16 +523,16 @@ function CliMcp() {
   return (
     <>
       <Card class="form-card">
-        <div class="panel-title">The orchard CLI</div>
-        <CodeBlock label="sign in" code={`orchard login ${host}\norchard apps\norchard deploy api\norchard logs api -f\norchard run warm-site`} />
+        <div class="panel-title">The wackcluborchard CLI</div>
+        <CodeBlock label="sign in" code={`wackcluborchard login ${host}\nwackcluborchard apps\nwackcluborchard deploy api\nwackcluborchard logs api -f\nwackcluborchard run warm-site`} />
       </Card>
       <Card class="form-card">
         <div>
           <div class="panel-title">MCP for agents</div>
           <div class="panel-desc">Agents like Claude can list, deploy, scale, roll back, read logs, query databases and run jobs. Authenticate with a personal API token.</div>
         </div>
-        <CodeBlock label="claude code" code={`claude mcp add --transport http orchard ${host}/mcp \\\n  --header "Authorization: Bearer orch_…"`} />
-        <CodeBlock label="mcp.json" code={JSON.stringify({ mcpServers: { orchard: { type: "http", url: host + "/mcp", headers: { Authorization: "Bearer orch_…" } } } }, null, 2)} />
+        <CodeBlock label="claude code" code={`claude mcp add --transport http wackcluborchard ${host}/mcp \\\n  --header "Authorization: Bearer wackclubwackcluborchard_…"`} />
+        <CodeBlock label="mcp.json" code={JSON.stringify({ mcpServers: { wackcluborchard: { type: "http", url: host + "/mcp", headers: { Authorization: "Bearer wackclubwackcluborchard_…" } } } }, null, 2)} />
       </Card>
     </>
   );
@@ -650,7 +650,7 @@ function AdminGitHub() {
     <Card class="form-card">
       <div>
         <div class="panel-title">GitHub App</div>
-        <div class="panel-desc">Orchard generates the app manifest, GitHub creates the app, and the credentials come back automatically. Then each person links their own account.</div>
+        <div class="panel-desc">Wack Club Orchard generates the app manifest, GitHub creates the app, and the credentials come back automatically. Then each person links their own account.</div>
       </div>
       {r.data.configured ? (
         <Callout kind="green" title={`Connected as ${r.data.slug}`}>
@@ -729,7 +729,7 @@ function AdminNodes() {
               {(n.roles || []).map((x: string) => <Tag key={x}>{x}</Tag>)}
               <Tag mono>{n.arch}</Tag>
               <Tag mono>{n.kubelet}</Tag>
-              {n.labels?.["orchard.dev/pool"] ? <Tag><Icon name="layers" size={11} /> {n.labels["orchard.dev/pool"]}</Tag> : null}
+              {n.labels?.["wackcluborchard.dev/pool"] ? <Tag><Icon name="layers" size={11} /> {n.labels["wackcluborchard.dev/pool"]}</Tag> : null}
             </div>
             <Meter label="CPU requested" used={n.requestedCpuMillis} cap={n.allocatableCpuMillis} format={cpu} />
             <Meter label="Memory requested" used={n.requestedMemoryMi} cap={n.allocatableMemoryMi} format={mem} />

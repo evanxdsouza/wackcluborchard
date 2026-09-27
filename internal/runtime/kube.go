@@ -21,19 +21,19 @@ import (
 
 // KubeConfig carries the cluster-facing settings the driver needs.
 type KubeConfig struct {
-	ControlNamespace string // where Orchard itself runs
+	ControlNamespace string // where Wack Club Orchard itself runs
 	GatewayName      string // shared Gateway for generated app hostnames
 	GatewayNamespace string
 	IngressClass     string // for custom-domain Ingresses
 	ClusterIssuer    string // cert-manager issuer for custom domains
 	StorageClass     string
-	Registry         string // e.g. registry.orchard.svc:5000
+	Registry         string // e.g. registry.wackcluborchard.svc:5000
 	RegistryInsecure bool
 	BuildkitImage    string
 	GitImage         string
 	PostgresImage    string // prefix, version appended
 	SandboxImage     string
-	ForwardAuthURL   string // auth wall endpoint on the Orchard server
+	ForwardAuthURL   string // auth wall endpoint on the Wack Club Orchard server
 	BuilderRuntime   string // RuntimeClass for build jobs, empty for none
 	BuilderNodeSel   map[string]string
 }
@@ -46,19 +46,19 @@ func DefaultKubeConfig() KubeConfig {
 		return d
 	}
 	return KubeConfig{
-		ControlNamespace: env("ORCHARD_NAMESPACE", "orchard"),
-		GatewayName:      env("GATEWAY_NAME", "orchard"),
-		GatewayNamespace: env("GATEWAY_NAMESPACE", "orchard"),
+		ControlNamespace: env("WACKCLUBORCHARD_NAMESPACE", "wackcluborchard"),
+		GatewayName:      env("GATEWAY_NAME", "wackcluborchard"),
+		GatewayNamespace: env("GATEWAY_NAMESPACE", "wackcluborchard"),
 		IngressClass:     env("TENANT_INGRESS_CLASS", "traefik"),
 		ClusterIssuer:    env("TENANT_CERT_ISSUER", "letsencrypt-prod"),
 		StorageClass:     os.Getenv("TENANT_STORAGE_CLASS"),
-		Registry:         env("REGISTRY_HOST", "registry.orchard.svc.cluster.local:5000"),
+		Registry:         env("REGISTRY_HOST", "registry.wackcluborchard.svc.cluster.local:5000"),
 		RegistryInsecure: env("REGISTRY_INSECURE", "true") == "true",
 		BuildkitImage:    env("BUILDKIT_IMAGE", "moby/buildkit:v0.18.2-rootless"),
 		GitImage:         env("GIT_IMAGE", "alpine/git:2.47.1"),
 		PostgresImage:    env("POSTGRES_IMAGE", "ghcr.io/cloudnative-pg/postgresql"),
 		SandboxImage:     env("SANDBOX_IMAGE", "mcr.microsoft.com/devcontainers/universal:2-linux"),
-		ForwardAuthURL:   env("FORWARD_AUTH_URL", "http://server.orchard.svc.cluster.local:8080/api/auth/forward"),
+		ForwardAuthURL:   env("FORWARD_AUTH_URL", "http://server.wackcluborchard.svc.cluster.local:8080/api/auth/forward"),
 		BuilderRuntime:   os.Getenv("BUILDER_RUNTIME_CLASS"),
 	}
 }
@@ -82,15 +82,15 @@ func NewKube(c *kube.Client, cfg KubeConfig) *Kube {
 func (k *Kube) Name() string { return "kubernetes" }
 
 const (
-	lblManaged = "orchard.dev/managed"
-	lblApp     = "orchard.dev/app"
+	lblManaged = "wackcluborchard.dev/managed"
+	lblApp     = "wackcluborchard.dev/app"
 	lblAppName = "app.kubernetes.io/name"
-	lblDB      = "orchard.dev/database"
-	lblRun     = "orchard.dev/run"
-	lblBuild   = "orchard.dev/build"
-	lblSandbox = "orchard.dev/sandbox"
-	lblPool    = "orchard.dev/pool"
-	lblOrg     = "orchard.dev/org"
+	lblDB      = "wackcluborchard.dev/database"
+	lblRun     = "wackcluborchard.dev/run"
+	lblBuild   = "wackcluborchard.dev/build"
+	lblSandbox = "wackcluborchard.dev/sandbox"
+	lblPool    = "wackcluborchard.dev/pool"
+	lblOrg     = "wackcluborchard.dev/org"
 )
 
 func meta(name, ns string, labels map[string]string) map[string]any {
@@ -248,7 +248,7 @@ func (k *Kube) onEvent(typ string, o kube.Obj) {
 	if owner == "" {
 		// Deployments and ReplicaSets are named after the app; attribute
 		// by prefix within managed namespaces.
-		if !strings.HasPrefix(ns, "orchard-") {
+		if !strings.HasPrefix(ns, "wackcluborchard-") {
 			return
 		}
 		owner = "name:" + ns + "/" + strings.SplitN(objName, "-", 2)[0]
@@ -304,7 +304,7 @@ func (k *Kube) EnsureNamespace(ctx context.Context, ns string, labels map[string
 	// only same-namespace pods and the ingress layer may connect in.
 	np := kube.Obj{
 		"kind":     "NetworkPolicy",
-		"metadata": meta("orchard-isolation", ns, map[string]string{}),
+		"metadata": meta("wackcluborchard-isolation", ns, map[string]string{}),
 		"spec": map[string]any{
 			"podSelector": map[string]any{},
 			"policyTypes": []any{"Ingress"},
@@ -434,7 +434,7 @@ func (k *Kube) ApplyApp(ctx context.Context, s AppSpec) error {
 			"template": map[string]any{
 				"metadata": map[string]any{
 					"labels":      map[string]any{lblManaged: "true", lblApp: s.ID, lblAppName: s.Name, lblOrg: s.Org},
-					"annotations": map[string]any{"orchard.dev/restart": s.RestartNonce},
+					"annotations": map[string]any{"wackcluborchard.dev/restart": s.RestartNonce},
 				},
 				"spec": podSpec,
 			},
@@ -514,7 +514,7 @@ func (k *Kube) applyRouting(ctx context.Context, s AppSpec, labels map[string]st
 			"forwardAuth": map[string]any{
 				"address":             k.cfg.ForwardAuthURL + "?app=" + s.ID,
 				"trustForwardHeader":  true,
-				"authResponseHeaders": []any{"X-Orchard-User", "X-Orchard-Email"},
+				"authResponseHeaders": []any{"X-Wackclubwackcluborchard-User", "X-Wackclubwackcluborchard-Email"},
 			},
 		}}
 		if _, err := k.c.Apply(ctx, mw); err != nil {
@@ -971,7 +971,7 @@ func (k *Kube) Backup(ctx context.Context, s DatabaseSpec) (int64, error) {
 	}
 	var out, errb bytes.Buffer
 	stamp := time.Now().UTC().Format("20060102-150405")
-	script := fmt.Sprintf("mkdir -p /var/lib/postgresql/data/orchard-backups && pg_dump -Fc -d %s -f /var/lib/postgresql/data/orchard-backups/%s.dump && stat -c %%s /var/lib/postgresql/data/orchard-backups/%s.dump", s.DBName, stamp, stamp)
+	script := fmt.Sprintf("mkdir -p /var/lib/postgresql/data/wackcluborchard-backups && pg_dump -Fc -d %s -f /var/lib/postgresql/data/wackcluborchard-backups/%s.dump && stat -c %%s /var/lib/postgresql/data/wackcluborchard-backups/%s.dump", s.DBName, stamp, stamp)
 	if err := k.c.Exec(ctx, s.Namespace, pod, "postgres", []string{"sh", "-c", script}, nil, &out, &errb); err != nil {
 		return 0, fmt.Errorf("%v: %s", err, errb.String())
 	}
@@ -1200,16 +1200,16 @@ func (k *Kube) SandboxExec(ctx context.Context, ns, name string, cmd []string, s
 	switch {
 	case len(cmd) == 0:
 		real = []string{"sh", "-c", "cd /workspace; command -v bash >/dev/null && exec bash -i 2>&1 || exec sh -i 2>&1"}
-	case cmd[0] == "orchard-ls":
+	case cmd[0] == "wackcluborchard-ls":
 		real = []string{"sh", "-c", "cd /workspace && find . -type f -not -path './.git/*' -not -path '*/node_modules/*' | sed 's|^./||' | sort | head -3000"}
 		stdin = nil
-	case cmd[0] == "orchard-read":
+	case cmd[0] == "wackcluborchard-read":
 		real = []string{"cat", "/workspace/" + strings.TrimPrefix(cmd[1], "/")}
 		stdin = nil
-	case cmd[0] == "orchard-write":
+	case cmd[0] == "wackcluborchard-write":
 		p := "/workspace/" + strings.TrimPrefix(cmd[1], "/")
 		real = []string{"sh", "-c", `mkdir -p "$(dirname "$1")" && cat > "$1"`, "sh", p}
-	case cmd[0] == "orchard-rm":
+	case cmd[0] == "wackcluborchard-rm":
 		real = []string{"rm", "-f", "/workspace/" + strings.TrimPrefix(cmd[1], "/")}
 		stdin = nil
 	case cmd[0] == "git":

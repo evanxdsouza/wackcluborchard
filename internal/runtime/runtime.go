@@ -1,4 +1,4 @@
-// Package runtime is the boundary between Orchard's control plane and the
+// Package runtime is the boundary between Wack Club Orchard's control plane and the
 // thing that actually runs workloads. The kube driver talks to a real
 // Kubernetes API; the sim driver fakes a cluster in-process so the whole
 // dashboard can be developed and demoed on a laptop.

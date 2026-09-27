@@ -1,4 +1,4 @@
-// Command orchard is the Wack Club Orchard CLI: deploy, scale, tail logs,
+// Command wackcluborchard is the Wack Club Orchard CLI: deploy, scale, tail logs,
 // query databases and run jobs from a terminal.
 package main
 
@@ -34,7 +34,7 @@ func configPath() string {
 	if err != nil {
 		dir = filepath.Join(os.Getenv("HOME"), ".config")
 	}
-	return filepath.Join(dir, "orchard", "config.json")
+	return filepath.Join(dir, "wackcluborchard", "config.json")
 }
 
 func loadConfig() config {
@@ -42,10 +42,10 @@ func loadConfig() config {
 	if b, err := os.ReadFile(configPath()); err == nil {
 		json.Unmarshal(b, &c)
 	}
-	if v := os.Getenv("ORCHARD_URL"); v != "" {
+	if v := os.Getenv("WACKCLUBORCHARD_URL"); v != "" {
 		c.URL = v
 	}
-	if v := os.Getenv("ORCHARD_TOKEN"); v != "" {
+	if v := os.Getenv("WACKCLUBORCHARD_TOKEN"); v != "" {
 		c.Token = v
 	}
 	return c
@@ -130,7 +130,7 @@ func (c *client) stream(path string, fn func(event string, data []byte) bool) er
 }
 
 func die(format string, a ...any) {
-	fmt.Fprintf(os.Stderr, "orchard: "+format+"\n", a...)
+	fmt.Fprintf(os.Stderr, "wackcluborchard: "+format+"\n", a...)
 	os.Exit(1)
 }
 
@@ -143,25 +143,25 @@ func must(err error) {
 const usage = `Wack Club Orchard CLI
 
 Usage:
-  orchard login <url>              sign in and save a token
-  orchard whoami                   show the signed-in account
-  orchard orgs                     list organizations
-  orchard apps                     list apps and databases
-  orchard status <app>             pods, deploy and URLs for an app
-  orchard deploy <app> [--image]   build or roll out an app
-  orchard logs <app> [-f] [--previous] [--pod p] [--since 15m]
-  orchard restart <app>            recreate pods on the same image
-  orchard scale <app> <n>          set replicas
-  orchard rollback <app> [#n]      roll back to an earlier deploy
-  orchard open <app>               open the app's URL
-  orchard env <project> [K=V ...] [--app a] [--secret]
-  orchard db query <db> "<sql>"    run SQL
-  orchard jobs                     list jobs
-  orchard run <job> [--no-wait]    run a job and stream its output
-  orchard mcp                      print MCP configuration for agents
-  orchard version
+  wackcluborchard login <url>              sign in and save a token
+  wackcluborchard whoami                   show the signed-in account
+  wackcluborchard orgs                     list organizations
+  wackcluborchard apps                     list apps and databases
+  wackcluborchard status <app>             pods, deploy and URLs for an app
+  wackcluborchard deploy <app> [--image]   build or roll out an app
+  wackcluborchard logs <app> [-f] [--previous] [--pod p] [--since 15m]
+  wackcluborchard restart <app>            recreate pods on the same image
+  wackcluborchard scale <app> <n>          set replicas
+  wackcluborchard rollback <app> [#n]      roll back to an earlier deploy
+  wackcluborchard open <app>               open the app's URL
+  wackcluborchard env <project> [K=V ...] [--app a] [--secret]
+  wackcluborchard db query <db> "<sql>"    run SQL
+  wackcluborchard jobs                     list jobs
+  wackcluborchard run <job> [--no-wait]    run a job and stream its output
+  wackcluborchard mcp                      print MCP configuration for agents
+  wackcluborchard version
 
-Set ORCHARD_URL and ORCHARD_TOKEN to skip login (CI).
+Set WACKCLUBORCHARD_URL and WACKCLUBORCHARD_TOKEN to skip login (CI).
 `
 
 func main() {
@@ -171,7 +171,7 @@ func main() {
 	}
 	cmd, args := os.Args[1], os.Args[2:]
 	if cmd == "version" || cmd == "--version" {
-		fmt.Println("orchard", version)
+		fmt.Println("wackcluborchard", version)
 		return
 	}
 	if cmd == "help" || cmd == "-h" || cmd == "--help" {
@@ -184,7 +184,7 @@ func main() {
 	}
 	cfg := loadConfig()
 	if cfg.URL == "" || cfg.Token == "" {
-		die("not signed in; run `orchard login <url>`")
+		die("not signed in; run `wackcluborchard login <url>`")
 	}
 	c := &client{cfg: cfg, h: &http.Client{Timeout: 60 * time.Second}}
 	switch cmd {
@@ -210,14 +210,14 @@ func main() {
 	case "apps", "ls":
 		listApps(c)
 	case "status":
-		need(args, 1, "orchard status <app>")
+		need(args, 1, "wackcluborchard status <app>")
 		status(c, resolveApp(c, args[0]))
 	case "deploy":
 		fs := flag.NewFlagSet("deploy", flag.ExitOnError)
 		image := fs.String("image", "", "deploy this image")
 		detach := fs.Bool("detach", false, "do not follow the build")
 		pos := parse(fs, args)
-		need(pos, 1, "orchard deploy <app>")
+		need(pos, 1, "wackcluborchard deploy <app>")
 		name := pos[0]
 		deploy(c, resolveApp(c, name), *image, *detach)
 	case "logs":
@@ -227,24 +227,24 @@ func main() {
 		pod := fs.String("pod", "", "one pod")
 		since := fs.String("since", "", "time window, like 15m")
 		pos := parse(fs, args)
-		need(pos, 1, "orchard logs <app>")
+		need(pos, 1, "wackcluborchard logs <app>")
 		name := pos[0]
 		logs(c, resolveApp(c, name), *follow, *prev, *pod, *since)
 	case "restart":
-		need(args, 1, "orchard restart <app>")
+		need(args, 1, "wackcluborchard restart <app>")
 		must(c.do("POST", "/apps/"+resolveApp(c, args[0]).ID+"/restart", nil, nil))
 		fmt.Println("restarting")
 	case "scale":
-		need(args, 2, "orchard scale <app> <replicas>")
+		need(args, 2, "wackcluborchard scale <app> <replicas>")
 		var n int
 		fmt.Sscan(args[1], &n)
 		must(c.do("PATCH", "/apps/"+resolveApp(c, args[0]).ID, map[string]int{"replicas": n}, nil))
 		fmt.Printf("scaled %s to %d\n", args[0], n)
 	case "rollback":
-		need(args, 1, "orchard rollback <app> [#number]")
+		need(args, 1, "wackcluborchard rollback <app> [#number]")
 		rollback(c, resolveApp(c, args[0]), args[1:])
 	case "open":
-		need(args, 1, "orchard open <app>")
+		need(args, 1, "wackcluborchard open <app>")
 		a := resolveApp(c, args[0])
 		if len(a.Domains) == 0 {
 			die("%s has no URL", a.Name)
@@ -256,7 +256,7 @@ func main() {
 		env(c, args)
 	case "db":
 		if len(args) < 3 || args[0] != "query" {
-			die("usage: orchard db query <db> \"<sql>\"")
+			die("usage: wackcluborchard db query <db> \"<sql>\"")
 		}
 		dbQuery(c, args[1], args[2])
 	case "jobs":
@@ -265,11 +265,11 @@ func main() {
 		fs := flag.NewFlagSet("run", flag.ExitOnError)
 		noWait := fs.Bool("no-wait", false, "trigger and return")
 		pos := parse(fs, args)
-		need(pos, 1, "orchard run <job>")
+		need(pos, 1, "wackcluborchard run <job>")
 		name := pos[0]
 		runJob(c, name, !*noWait)
 	case "mcp":
-		fmt.Printf("claude mcp add --transport http orchard %s/mcp --header \"Authorization: Bearer %s\"\n", strings.TrimRight(cfg.URL, "/"), cfg.Token)
+		fmt.Printf("claude mcp add --transport http wackcluborchard %s/mcp --header \"Authorization: Bearer %s\"\n", strings.TrimRight(cfg.URL, "/"), cfg.Token)
 	case "logout":
 		os.Remove(configPath())
 		fmt.Println("signed out")
@@ -300,7 +300,7 @@ func need(args []string, n int, u string) {
 
 func login(args []string) {
 	if len(args) < 1 {
-		die("usage: orchard login <url>")
+		die("usage: wackcluborchard login <url>")
 	}
 	u := args[0]
 	if !strings.Contains(u, "://") {
@@ -602,7 +602,7 @@ func env(c *client, args []string) {
 		pos = pos[1:]
 	}
 	if projectRef == "" {
-		die("usage: orchard env <project> [K=V ...] [--app a] [--secret]")
+		die("usage: wackcluborchard env <project> [K=V ...] [--app a] [--secret]")
 	}
 	var pid string
 	var appID string

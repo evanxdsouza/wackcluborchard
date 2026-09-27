@@ -6,7 +6,7 @@ kind: Gateway
 metadata:
   name: {{ .Values.gateway.name }}
   namespace: {{ .Release.Namespace }}
-  labels: {{- include "orchard.labels" . | nindent 4 }}
+  labels: {{- include "wackcluborchard.labels" . | nindent 4 }}
 spec:
   gatewayClassName: {{ .Values.gateway.className }}
   listeners:
@@ -32,7 +32,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: orchard-apps-wildcard
+  name: wackcluborchard-apps-wildcard
   namespace: {{ .Release.Namespace }}
 spec:
   secretName: {{ .Values.gateway.http.wildcardSecret }}

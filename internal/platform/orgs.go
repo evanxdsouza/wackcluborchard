@@ -8,7 +8,7 @@ import (
 	"github.com/evanxdsouza/wackcluborchard/internal/store"
 )
 
-var Backgrounds = []string{"clouds", "dusk", "meadow", "orchard", "night", "sunrise", "ocean", "lavender"}
+var Backgrounds = []string{"clouds", "dusk", "meadow", "wackcluborchard", "night", "sunrise", "ocean", "lavender"}
 
 func DefaultQuota() store.Quota {
 	return store.Quota{CPUMillis: 16000, MemoryMi: 32768, StorageGi: 200, Apps: 50, Databases: 10, Sandboxes: 5}
@@ -192,7 +192,7 @@ func (p *Platform) SeedDemo(user *store.User, org *store.Org) {
 	}
 	p.CreateJob(user, pr.ID, JobInput{Name: "nightly-report", Schedule: "0 6 * * *", Concurrency: "queue", Steps: []store.JobStep{
 		{Name: "collect", Type: "script", Lang: "python", Source: "import datetime\nprint(\"collecting stats for\", datetime.date.today())\nprint(\"12 signups, 3 new projects\")"},
-		{Name: "publish", Type: "script", Lang: "node", Source: "console.log('report published to #orchard-stats')"},
+		{Name: "publish", Type: "script", Lang: "node", Source: "console.log('report published to #wackcluborchard-stats')"},
 	}})
 	for _, t := range []struct{ tpl, name string }{{"node-postgres", "api"}, {"redis", "cache"}, {"static-site", "site"}} {
 		p.Store.Write(func(d *store.Data) error {

@@ -1,12 +1,12 @@
 # MCP
 
-Orchard speaks the Model Context Protocol over streamable HTTP at `/mcp` (or
+Wack Club Orchard speaks the Model Context Protocol over streamable HTTP at `/mcp` (or
 `https://mcp.<domain>/mcp` when the installer publishes the MCP host). Agents
 authenticate with a personal API token and can do what that person can do.
 
 ```bash
-claude mcp add --transport http orchard https://orchard.example.com/mcp \
-  --header "Authorization: Bearer orch_…"
+claude mcp add --transport http wackcluborchard https://wackcluborchard.example.com/mcp \
+  --header "Authorization: Bearer wackclubwackcluborchard_…"
 ```
 
 ## Tools

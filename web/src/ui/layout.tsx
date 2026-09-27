@@ -65,8 +65,8 @@ export function Shell({ org, children }: { org: string; children: Child }) {
           class="org-menu"
           trigger={(open, toggle) => (
             <button type="button" class="org-switch" onClick={toggle} title="Switch organization">
-              <Logo size={36} />
-              <span class="org-name hide-collapsed">{current?.name.replace(/'s Orchard$/, "") === me.name ? "Orchard" : current?.name || "Orchard"}</span>
+              <Logo size={32} />
+              <span class="org-name hide-collapsed">{current?.name.replace(/'s Wack Club Orchard$/, "") === me.name ? "Wack Club Orchard" : current?.name || "Wack Club Orchard"}</span>
               <Icon name="chevrons-up-down" size={15} class="muted hide-collapsed" />
             </button>
           )}

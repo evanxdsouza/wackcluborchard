@@ -1,6 +1,6 @@
-// Command orchardctl operates a Wack Club Orchard install from the box it
+// Command wackcluborchardctl operates a Wack Club Orchard install from the box it
 // runs on: mint claim links, set the public IP, add hostnames, toggle the
-// MCP endpoint, and apply /etc/orchard/values.yaml with Helm.
+// MCP endpoint, and apply /etc/wackcluborchard/values.yaml with Helm.
 package main
 
 import (
@@ -20,26 +20,26 @@ func env(k, d string) string {
 }
 
 var (
-	namespace  = env("ORCHARD_NAMESPACE", "orchard")
-	deployment = env("ORCHARD_DEPLOYMENT", "orchard-server")
-	values     = env("ORCHARD_VALUES", "/etc/orchard/values.yaml")
-	chart      = env("ORCHARD_CHART", "/usr/local/share/orchard/chart")
-	release    = env("ORCHARD_RELEASE", "orchard")
+	namespace  = env("WACKCLUBORCHARD_NAMESPACE", "wackcluborchard")
+	deployment = env("WACKCLUBORCHARD_DEPLOYMENT", "wackcluborchard-server")
+	values     = env("WACKCLUBORCHARD_VALUES", "/etc/wackcluborchard/values.yaml")
+	chart      = env("WACKCLUBORCHARD_CHART", "/usr/local/share/wackcluborchard/chart")
+	release    = env("WACKCLUBORCHARD_RELEASE", "wackcluborchard")
 )
 
-const usage = `orchardctl: operate this Wack Club Orchard instance
+const usage = `wackcluborchardctl: operate this Wack Club Orchard instance
 
-  orchardctl status                     instance summary
-  orchardctl claim [--url host]         mint a single-use claim / recovery link
-  orchardctl public-ip set <ip> [--apply]
-  orchardctl hostname add <name> [--apply]
-  orchardctl hostname remove <name> [--apply]
-  orchardctl mcp enable|disable [--domain d] [--apply]
-  orchardctl signup open|invite|closed
-  orchardctl config get <path>          read /etc/orchard/values.yaml (needs yq)
-  orchardctl config set <path> <value>  write it
-  orchardctl update                     helm upgrade with the values file
-  orchardctl logs [-f]                  control-plane logs
+  wackcluborchardctl status                      instance summary
+  wackcluborchardctl claim [--url host]          mint a single-use claim / recovery link
+  wackcluborchardctl public-ip set <ip> [--apply]
+  wackcluborchardctl hostname add <name> [--apply]
+  wackcluborchardctl hostname remove <name> [--apply]
+  wackcluborchardctl mcp enable|disable [--domain d] [--apply]
+  wackcluborchardctl signup open|invite|closed
+  wackcluborchardctl config get <path>           read /etc/wackcluborchard/values.yaml (needs yq)
+  wackcluborchardctl config set <path> <value>   write it
+  wackcluborchardctl update                      helm upgrade with the values file
+  wackcluborchardctl logs [-f]                   control-plane logs
 
 --apply also writes the change to the values file and runs an update, so
 it survives the next upgrade.
@@ -63,22 +63,22 @@ func kubectl() string {
 	if _, err := exec.LookPath("k3s"); err == nil {
 		return "k3s kubectl"
 	}
-	fmt.Fprintln(os.Stderr, "orchardctl: kubectl not found")
+	fmt.Fprintln(os.Stderr, "wackcluborchardctl: kubectl not found")
 	os.Exit(1)
 	return ""
 }
 
-// admin runs `orchard-server admin ...` inside the server pod.
+// admin runs `wackcluborchard-server admin ...` inside the server pod.
 func admin(args ...string) (string, error) {
 	k := strings.Fields(kubectl())
-	full := append(k[1:], "-n", namespace, "exec", "deploy/"+deployment, "--", "orchard-server", "admin")
+	full := append(k[1:], "-n", namespace, "exec", "deploy/"+deployment, "--", "wackcluborchard-server", "admin")
 	full = append(full, args...)
 	full = append(full, "--data", "/data")
 	return output(k[0], full...)
 }
 
 func die(format string, a ...any) {
-	fmt.Fprintf(os.Stderr, "orchardctl: "+format+"\n", a...)
+	fmt.Fprintf(os.Stderr, "wackcluborchardctl: "+format+"\n", a...)
 	os.Exit(1)
 }
 
@@ -136,7 +136,7 @@ func main() {
 	args := os.Args[2:]
 	switch os.Args[1] {
 	case "version":
-		fmt.Println("orchardctl", version)
+		fmt.Println("wackcluborchardctl", version)
 	case "status":
 		out, err := admin("status")
 		if err != nil {
@@ -160,7 +160,7 @@ func main() {
 		fmt.Println("    " + out)
 	case "public-ip":
 		if len(args) < 2 || args[0] != "set" {
-			die("usage: orchardctl public-ip set <ip> [--apply]")
+			die("usage: wackcluborchardctl public-ip set <ip> [--apply]")
 		}
 		settings("publicIp=" + args[1])
 		if has(args, "--apply") {
@@ -171,7 +171,7 @@ func main() {
 		}
 	case "hostname":
 		if len(args) < 2 {
-			die("usage: orchardctl hostname add|remove <name> [--apply]")
+			die("usage: wackcluborchardctl hostname add|remove <name> [--apply]")
 		}
 		switch args[0] {
 		case "add":
@@ -191,11 +191,11 @@ func main() {
 				update()
 			}
 		default:
-			die("usage: orchardctl hostname add|remove <name>")
+			die("usage: wackcluborchardctl hostname add|remove <name>")
 		}
 	case "mcp":
 		if len(args) < 1 {
-			die("usage: orchardctl mcp enable|disable [--domain d] [--apply]")
+			die("usage: wackcluborchardctl mcp enable|disable [--domain d] [--apply]")
 		}
 		on := args[0] == "enable"
 		kv := []string{fmt.Sprintf("mcpEnabled=%v", on)}
@@ -215,12 +215,12 @@ func main() {
 		}
 	case "signup":
 		if len(args) < 1 {
-			die("usage: orchardctl signup open|invite|closed")
+			die("usage: wackcluborchardctl signup open|invite|closed")
 		}
 		settings("signupMode=" + args[0])
 	case "config":
 		if len(args) < 2 {
-			die("usage: orchardctl config get|set <path> [value]")
+			die("usage: wackcluborchardctl config get|set <path> [value]")
 		}
 		path := args[1]
 		if !strings.HasPrefix(path, ".") {
@@ -233,12 +233,12 @@ func main() {
 			}
 		case "set":
 			if len(args) < 3 {
-				die("usage: orchardctl config set <path> <value>")
+				die("usage: wackcluborchardctl config set <path> <value>")
 			}
 			if err := yq(fmt.Sprintf(`%s = "%s"`, path, args[2])); err != nil {
 				die("%v", err)
 			}
-			fmt.Println("saved; run `orchardctl update` to apply")
+			fmt.Println("saved; run `wackcluborchardctl update` to apply")
 		}
 	case "update":
 		update()

@@ -19,7 +19,7 @@ gates access to what is inside. Projects carry shared variables, an icon and a
 sky of their own.
 
 **App**: one deployable unit: an image, replicas, ports, variables, resources,
-volumes, a health check. From a GitHub repo (Orchard builds it) or an image.
+volumes, a health check. From a GitHub repo (Wack Club Orchard builds it) or an image.
 
 **Environment**: a named slice of a project. Variables can be scoped to one.
 

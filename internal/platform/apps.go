@@ -379,7 +379,7 @@ func (p *Platform) EnqueueApp(appID string) {
 		if err != nil || !ok {
 			return err
 		}
-		if err := p.Driver.EnsureNamespace(ctx, spec.Namespace, map[string]string{"orchard.dev/org": spec.Org}); err != nil {
+		if err := p.Driver.EnsureNamespace(ctx, spec.Namespace, map[string]string{"wackcluborchard.dev/org": spec.Org}); err != nil {
 			return err
 		}
 		return p.Driver.ApplyApp(ctx, spec)
@@ -436,10 +436,10 @@ func ResolveVars(d *store.Data, a *store.App) (env, secrets map[string]string) {
 			}
 		}
 	}
-	env["ORCHARD_APP"] = a.Name
+	env["WACKCLUBORCHARD_APP"] = a.Name
 	for _, dm := range a.Domains {
 		if dm.Generated {
-			env["ORCHARD_URL"] = "https://" + dm.Host
+			env["WACKCLUBORCHARD_URL"] = "https://" + dm.Host
 		}
 	}
 	return env, secrets
@@ -719,7 +719,7 @@ func (p *Platform) runBuild(depID string) {
 		org := d.Orgs[pr.OrgID]
 		reg := p.Cfg.Registry
 		if reg == "" {
-			reg = "registry.orchard.svc.cluster.local:5000"
+			reg = "registry.wackcluborchard.svc.cluster.local:5000"
 		}
 		commit := dep.Commit
 		tag := fmt.Sprintf("%d", dep.Number)
@@ -844,7 +844,7 @@ func (p *Platform) rollout(ctx context.Context, depID, appID, image string, step
 		p.finishDeploy(depID, "failed", "app was deleted")
 		return
 	}
-	if err := p.Driver.EnsureNamespace(ctx, spec.Namespace, map[string]string{"orchard.dev/org": spec.Org}); err != nil {
+	if err := p.Driver.EnsureNamespace(ctx, spec.Namespace, map[string]string{"wackcluborchard.dev/org": spec.Org}); err != nil {
 		p.finishDeploy(depID, "failed", err.Error())
 		return
 	}

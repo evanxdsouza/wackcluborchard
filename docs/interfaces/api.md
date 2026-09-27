@@ -1,7 +1,7 @@
 # HTTP API
 
 Everything the dashboard does goes through `/api`, JSON in and out. Authenticate
-with a session cookie or `Authorization: Bearer orch_…` (create tokens under
+with a session cookie or `Authorization: Bearer wackclubwackcluborchard_…` (create tokens under
 **Account → API tokens**). Cookie-authenticated writes must come from the
 dashboard's origin.
 

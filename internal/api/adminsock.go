@@ -76,7 +76,7 @@ func (s *Server) AdminSocket(path string) error {
 			}
 			return nil
 		})
-		s.P.Audit("", nil, "instance.settings_updated", "orchardctl", nil)
+		s.P.Audit("", nil, "instance.settings_updated", "wackcluborchardctl", nil)
 		var st store.Settings
 		s.P.Store.Read(func(d *store.Data) { st = d.Settings })
 		writeJSON(w, 200, map[string]any{"publicIp": st.PublicIP, "mcpEnabled": st.MCPEnabled, "mcpDomain": st.MCPDomain, "hostnames": st.Hostnames, "signupMode": st.SignupMode})

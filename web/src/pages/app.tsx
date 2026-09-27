@@ -164,7 +164,7 @@ function Overview({ a, metrics, org }: { a: any; metrics: any[]; org: string }) 
         {a.image ? <LogView appId={a.id} pods={pods} /> : (
           <Card>
             <Empty icon="rocket" title="Not deployed yet" action={a.canEdit ? <Button kind="primary" icon="rocket" onClick={async () => { const r = await act(() => post(`/apps/${a.id}/deploy`)); if (r) navigate(`/o/${org}/deploys/${r.deploy.id}`); }}>Deploy now</Button> : null}>
-              {a.source.type === "github" ? "Orchard will build the repository on the cluster and roll it out." : "Orchard will pull the image and roll it out."}
+              {a.source.type === "github" ? "Wack Club Orchard will build the repository on the cluster and roll it out." : "Wack Club Orchard will pull the image and roll it out."}
             </Empty>
           </Card>
         )}
@@ -284,7 +284,7 @@ function AppVariables({ a, org }: { a: any; org: string }) {
         <div class="section-title" style={{ marginBottom: 10 }}>Shared by {a.project.name}</div>
         {shared.length ? <Table head={["Key", "Value", ""]}>{shared.map(row)}</Table> : <div class="muted">None.</div>}
       </div>
-      <Callout kind="info">Orchard also sets <code>PORT</code>, <code>ORCHARD_APP</code> and <code>ORCHARD_URL</code>.</Callout>
+      <Callout kind="info">Wack Club Orchard also sets <code>PORT</code>, <code>WACKCLUBORCHARD_APP</code> and <code>WACKCLUBORCHARD_URL</code>.</Callout>
     </div>
   );
 }
@@ -507,7 +507,7 @@ function Settings({ a, reload }: { a: any; reload: () => void }) {
 
       <Card class="form-card">
         <div class="panel-title">Access and isolation</div>
-        <Toggle checked={a.authWall} onChange={(v) => save({ authWall: v }, v ? "Auth wall on" : "Auth wall off")} disabled={dis} label="Auth wall" hint="Only signed-in members of this project can reach the app's URLs. The app sees X-Orchard-User." />
+        <Toggle checked={a.authWall} onChange={(v) => save({ authWall: v }, v ? "Auth wall on" : "Auth wall off")} disabled={dis} label="Auth wall" hint="Only signed-in members of this project can reach the app's URLs. The app sees X-Wackclubwackcluborchard-User." />
         <Toggle checked={a.sandboxed} onChange={(v) => save({ sandboxed: v })} disabled={dis} label="gVisor sandbox" hint="Runs pods under a user-space kernel. Needs the gvisor RuntimeClass on the nodes; use it for code you do not trust." />
       </Card>
     </div>

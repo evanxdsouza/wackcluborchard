@@ -10,14 +10,14 @@ GitHub repo ─push─▶ Build on cluster ─▶ Push image ─▶ Roll out + h
 ## 1. Connect GitHub
 
 An instance admin creates the GitHub App from **Instance admin → GitHub App**
-with the **manifest flow**: Orchard generates the manifest, GitHub creates the
+with the **manifest flow**: Wack Club Orchard generates the manifest, GitHub creates the
 app, and the credentials come back automatically. Then each person links their
-own account under **Account → GitHub**; Orchard only sees the repositories that
+own account under **Account → GitHub**; Wack Club Orchard only sees the repositories that
 account granted.
 
 ## 2. Create an app
 
-**New → GitHub repository.** Pick the repo and a branch. Orchard reads the
+**New → GitHub repository.** Pick the repo and a branch. Wack Club Orchard reads the
 repository and fills in the **Dockerfile** and its **build stages** (it targets
 the last stage), the **port** from `EXPOSE`, and the **variables** declared with
 `ENV`/`ARG`.
@@ -52,7 +52,7 @@ running container.
 
 - **Wrong build stage.** See above.
 - **The app needs a database at build time.** Migrations belong at start, not build.
-- **The repo does not build with its own Dockerfile.** Orchard runs exactly what
+- **The repo does not build with its own Dockerfile.** Wack Club Orchard runs exactly what
   the Dockerfile says; it usually fails locally too.
 
 A crash loop after a successful build shows as **Failed** with the dead

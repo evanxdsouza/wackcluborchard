@@ -1,4 +1,4 @@
-// Package platform is Orchard's control plane: it owns desired state in the
+// Package platform is Wack Club Orchard's control plane: it owns desired state in the
 // store, drives the runtime through a retrying apply queue, runs builds
 // within a bounded number of slots, schedules jobs, and mirrors observed
 // cluster state back so reads never have to ask the cluster.

@@ -197,7 +197,7 @@ func (s *Server) signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// every user gets a personal organization
-	org, _ := s.P.CreateOrg(user, user.Name+"'s Orchard", user.Username)
+	org, _ := s.P.CreateOrg(user, user.Name+"'s Wack Club Orchard", user.Username)
 	if s.Cfg.Demo && first && org != nil {
 		s.P.SeedDemo(user, org)
 	}
@@ -264,7 +264,7 @@ func MintSetupToken(st *store.Store) (string, bool) {
 }
 
 // MintRecoveryToken always mints a claim token, even with a superadmin;
-// used by orchardctl claim when someone is locked out.
+// used by wackcluborchardctl claim when someone is locked out.
 func MintRecoveryToken(st *store.Store) string {
 	tok := auth.Token("", 24)
 	st.Write(func(d *store.Data) error {
@@ -295,7 +295,7 @@ func (s *Server) claim(w http.ResponseWriter, r *http.Request) {
 	err := s.P.Store.Write(func(d *store.Data) error {
 		st := d.Settings
 		if st.SetupTokenHash == "" || st.SetupExpires == nil || time.Now().After(*st.SetupExpires) || !auth.Equal(st.SetupTokenHash, auth.HashToken(in.Token)) {
-			return platform.Invalid("that claim link is invalid, used or expired; run `orchardctl claim` for a new one")
+			return platform.Invalid("that claim link is invalid, used or expired; run `wackcluborchardctl claim` for a new one")
 		}
 		d.Settings.SetupTokenHash = ""
 		d.Settings.SetupExpires = nil
@@ -432,7 +432,7 @@ func (s *Server) createToken(w http.ResponseWriter, r *http.Request, u *store.Us
 	if in.Name == "" {
 		in.Name = "token"
 	}
-	tok := auth.Token("orch_", 30)
+	tok := auth.Token("wackclubwackcluborchard_", 30)
 	t := &store.APIToken{ID: store.NewID("tok"), UserID: u.ID, Name: in.Name, Hash: auth.HashToken(tok), Prefix: tok[:10], CreatedAt: time.Now()}
 	s.P.Store.Write(func(d *store.Data) error {
 		d.APITokens[t.ID] = t
@@ -903,18 +903,18 @@ func (s *Server) forwardAuth(w http.ResponseWriter, r *http.Request) {
 	orig := proto + "://" + r.Header.Get("X-Forwarded-Host") + r.Header.Get("X-Forwarded-Uri")
 	// a fresh ticket from the dashboard: trade it for a cookie on this host
 	if ou, err := url.Parse(orig); err == nil {
-		if t := ou.Query().Get("__orchard_ticket"); t != "" {
+		if t := ou.Query().Get("__wackcluborchard_ticket"); t != "" {
 			if parts, ok := s.verifyWall(t); ok && parts[1] == appID {
 				q := ou.Query()
-				q.Del("__orchard_ticket")
+				q.Del("__wackcluborchard_ticket")
 				ou.RawQuery = q.Encode()
-				http.SetCookie(w, &http.Cookie{Name: "orchard_wall", Value: s.signWall(parts[0], appID, time.Now().Add(12*time.Hour).Format(time.RFC3339)), Path: "/", HttpOnly: true, Secure: proto == "https", SameSite: http.SameSiteLaxMode})
+				http.SetCookie(w, &http.Cookie{Name: "wackcluborchard_wall", Value: s.signWall(parts[0], appID, time.Now().Add(12*time.Hour).Format(time.RFC3339)), Path: "/", HttpOnly: true, Secure: proto == "https", SameSite: http.SameSiteLaxMode})
 				http.Redirect(w, r, ou.String(), http.StatusFound)
 				return
 			}
 		}
 	}
-	if c, err := r.Cookie("orchard_wall"); err == nil {
+	if c, err := r.Cookie("wackcluborchard_wall"); err == nil {
 		if parts, ok := s.verifyWall(c.Value); ok && parts[1] == appID {
 			var user *store.User
 			s.P.Store.Read(func(d *store.Data) {
@@ -923,8 +923,8 @@ func (s *Server) forwardAuth(w http.ResponseWriter, r *http.Request) {
 				}
 			})
 			if user != nil {
-				w.Header().Set("X-Orchard-User", user.Username)
-				w.Header().Set("X-Orchard-Email", user.Email)
+				w.Header().Set("X-Wackclubwackcluborchard-User", user.Username)
+				w.Header().Set("X-Wackclubwackcluborchard-Email", user.Email)
 				w.WriteHeader(200)
 				return
 			}
@@ -969,7 +969,7 @@ func (s *Server) wall(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	q := target.Query()
-	q.Set("__orchard_ticket", s.signWall(u.ID, appID, time.Now().Add(time.Minute).Format(time.RFC3339)))
+	q.Set("__wackcluborchard_ticket", s.signWall(u.ID, appID, time.Now().Add(time.Minute).Format(time.RFC3339)))
 	target.RawQuery = q.Encode()
 	http.Redirect(w, r, target.String(), http.StatusFound)
 }

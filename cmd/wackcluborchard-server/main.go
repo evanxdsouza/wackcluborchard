@@ -1,4 +1,4 @@
-// Command orchard-server runs the Wack Club Orchard control plane: API,
+// Command wackcluborchard-server runs the Wack Club Orchard control plane: API,
 // dashboard, MCP endpoint, build queue, job scheduler and informers.
 package main
 
@@ -43,17 +43,17 @@ func main() {
 		adminCommand(os.Args[2:])
 		return
 	}
-	addr := flag.String("addr", env("ORCHARD_ADDR", ":"+env("PORT", "8080")), "listen address")
-	dataDir := flag.String("data", env("ORCHARD_DATA", "./data"), "state directory")
-	rt := flag.String("runtime", env("ORCHARD_RUNTIME", "auto"), "runtime: auto, kubernetes or sim")
-	demo := flag.Bool("demo", env("ORCHARD_DEMO", "") == "true", "seed a demo project for the first user")
-	webDir := flag.String("web", env("ORCHARD_WEB_DIR", ""), "serve the frontend from this directory instead of the embedded build")
+	addr := flag.String("addr", env("WACKCLUBORCHARD_ADDR", ":"+env("PORT", "8080")), "listen address")
+	dataDir := flag.String("data", env("WACKCLUBORCHARD_DATA", "./data"), "state directory")
+	rt := flag.String("runtime", env("WACKCLUBORCHARD_RUNTIME", "auto"), "runtime: auto, kubernetes or sim")
+	demo := flag.Bool("demo", env("WACKCLUBORCHARD_DEMO", "") == "true", "seed a demo project for the first user")
+	webDir := flag.String("web", env("WACKCLUBORCHARD_WEB_DIR", ""), "serve the frontend from this directory instead of the embedded build")
 	flag.Parse()
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	st, err := store.Open(filepath.Join(*dataDir, "orchard.json"))
+	st, err := store.Open(filepath.Join(*dataDir, "wackcluborchard.json"))
 	if err != nil {
 		log.Fatalf("open state: %v", err)
 	}
@@ -64,7 +64,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if driver.Name() == "sim" && !*demo && os.Getenv("ORCHARD_DEMO") == "" {
+	if driver.Name() == "sim" && !*demo && os.Getenv("WACKCLUBORCHARD_DEMO") == "" {
 		*demo = true
 	}
 	frontend := strings.TrimRight(env("FRONTEND_URL", ""), "/")
@@ -162,7 +162,7 @@ func initSettings(st *store.Store) {
 			}
 		}
 		set(&s.InstanceName, "INSTANCE_NAME", "Wack Club Orchard")
-		set(&s.Domain, "ORCHARD_DOMAIN", "localhost")
+		set(&s.Domain, "WACKCLUBORCHARD_DOMAIN", "localhost")
 		set(&s.AppDomain, "APP_DOMAIN", "apps.localhost")
 		set(&s.MCPDomain, "MCP_DOMAIN", "")
 		set(&s.IngressMode, "INGRESS_MODE", "lan")
@@ -200,13 +200,13 @@ func initSettings(st *store.Store) {
 }
 
 // adminCommand talks to a running server over its admin socket. It is
-// what `orchardctl` runs inside the server pod.
+// what `wackcluborchardctl` runs inside the server pod.
 func adminCommand(args []string) {
 	fs := flag.NewFlagSet("admin", flag.ExitOnError)
-	dataDir := fs.String("data", env("ORCHARD_DATA", "./data"), "state directory")
+	dataDir := fs.String("data", env("WACKCLUBORCHARD_DATA", "./data"), "state directory")
 	url := fs.String("url", "", "base URL for the claim link")
 	if len(args) == 0 {
-		fmt.Fprintln(os.Stderr, "usage: orchard-server admin <claim|status|set key=value...>")
+		fmt.Fprintln(os.Stderr, "usage: wackcluborchard-server admin <claim|status|set key=value...>")
 		os.Exit(2)
 	}
 	cmd := args[0]
@@ -221,9 +221,9 @@ func adminCommand(args []string) {
 	switch cmd {
 	case "claim":
 		b, _ := json.Marshal(map[string]string{"url": *url})
-		resp, err = client.Post("http://orchard/claim", "application/json", strings.NewReader(string(b)))
+		resp, err = client.Post("http://wackcluborchard/claim", "application/json", strings.NewReader(string(b)))
 	case "status":
-		resp, err = client.Get("http://orchard/status")
+		resp, err = client.Get("http://wackcluborchard/status")
 	case "set":
 		body := map[string]any{}
 		for _, kv := range fs.Args() {
@@ -238,7 +238,7 @@ func adminCommand(args []string) {
 			}
 		}
 		b, _ := json.Marshal(body)
-		resp, err = client.Post("http://orchard/settings", "application/json", strings.NewReader(string(b)))
+		resp, err = client.Post("http://wackcluborchard/settings", "application/json", strings.NewReader(string(b)))
 	default:
 		fmt.Fprintln(os.Stderr, "unknown admin command", cmd)
 		os.Exit(2)

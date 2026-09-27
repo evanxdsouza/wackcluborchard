@@ -492,7 +492,7 @@ func (s *Server) sandboxFiles(w http.ResponseWriter, r *http.Request, u *store.U
 	}
 	ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
 	defer cancel()
-	out, err := s.P.SandboxRun(ctx, sb.ID, []string{"orchard-ls"}, "")
+	out, err := s.P.SandboxRun(ctx, sb.ID, []string{"wackcluborchard-ls"}, "")
 	if err != nil {
 		writeErr(w, 409, err.Error())
 		return
@@ -526,7 +526,7 @@ func (s *Server) sandboxReadFile(w http.ResponseWriter, r *http.Request, u *stor
 	}
 	ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
 	defer cancel()
-	out, err := s.P.SandboxRun(ctx, sb.ID, []string{"orchard-read", p}, "")
+	out, err := s.P.SandboxRun(ctx, sb.ID, []string{"wackcluborchard-read", p}, "")
 	if err != nil {
 		writeErr(w, 404, err.Error())
 		return
@@ -552,9 +552,9 @@ func (s *Server) sandboxWriteFile(w http.ResponseWriter, r *http.Request, u *sto
 	}
 	ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
 	defer cancel()
-	cmd := []string{"orchard-write", p}
+	cmd := []string{"wackcluborchard-write", p}
 	if in.Delete {
-		cmd = []string{"orchard-rm", p}
+		cmd = []string{"wackcluborchard-rm", p}
 	}
 	if _, err := s.P.SandboxRun(ctx, sb.ID, cmd, in.Content); err != nil {
 		writeErr(w, 409, err.Error())

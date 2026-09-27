@@ -1,5 +1,5 @@
 {{- if .Values.registry.enabled }}
-# zot: a small OCI registry for images Orchard builds.
+# zot: a small OCI registry for images Wack Club Orchard builds.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -31,15 +31,15 @@ kind: Deployment
 metadata:
   name: registry
   namespace: {{ .Release.Namespace }}
-  labels: {{- include "orchard.labels" . | nindent 4 }}
+  labels: {{- include "wackcluborchard.labels" . | nindent 4 }}
 spec:
   replicas: 1
   strategy: { type: Recreate }
   selector:
-    matchLabels: { app.kubernetes.io/name: orchard-registry }
+    matchLabels: { app.kubernetes.io/name: wackcluborchard-registry }
   template:
     metadata:
-      labels: { app.kubernetes.io/name: orchard-registry }
+      labels: { app.kubernetes.io/name: wackcluborchard-registry }
     spec:
       containers:
         - name: zot
@@ -64,6 +64,6 @@ metadata:
   name: registry
   namespace: {{ .Release.Namespace }}
 spec:
-  selector: { app.kubernetes.io/name: orchard-registry }
+  selector: { app.kubernetes.io/name: wackcluborchard-registry }
   ports: [{ name: registry, port: 5000, targetPort: registry }]
 {{- end }}

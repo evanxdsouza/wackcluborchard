@@ -1,5 +1,5 @@
 apiVersion: v2
-name: orchard
+name: wackcluborchard
 description: Wack Club Orchard, a self-hosted Kubernetes-native platform for apps, databases and jobs.
 type: application
 version: 0.1.0

@@ -1,4 +1,4 @@
-// Package store is Orchard's control-plane state: a typed document store
+// Package store is Wack Club Orchard's control-plane state: a typed document store
 // held in memory and snapshotted atomically to disk. Reads never touch the
 // cluster; the runtime driver mirrors cluster state into it.
 package store
@@ -366,7 +366,7 @@ func (d *Data) Namespace(projectID string) string {
 	if o == nil {
 		return ""
 	}
-	ns := "orchard-" + o.Slug + "-" + p.Slug
+	ns := "wackcluborchard-" + o.Slug + "-" + p.Slug
 	if len(ns) > 63 {
 		ns = strings.Trim(ns[:63], "-")
 	}

@@ -164,7 +164,7 @@ function Overview({ a, metrics, org }) {
         h("div", { class: "overview-grid", style: { marginTop: dep && (dep.status !== "succeeded") ? 14 : 0 } },
             a.image ? h(LogView, { appId: a.id, pods: pods }) : (h(Card, null,
                 h(Empty, { icon: "rocket", title: "Not deployed yet", action: a.canEdit ? h(Button, { kind: "primary", icon: "rocket", onClick: async () => { const r = await act(() => post(`/apps/${a.id}/deploy`)); if (r)
-                            navigate(`/o/${org}/deploys/${r.deploy.id}`); } }, "Deploy now") : null }, a.source.type === "github" ? "Orchard will build the repository on the cluster and roll it out." : "Orchard will pull the image and roll it out."))),
+                            navigate(`/o/${org}/deploys/${r.deploy.id}`); } }, "Deploy now") : null }, a.source.type === "github" ? "Wack Club Orchard will build the repository on the cluster and roll it out." : "Wack Club Orchard will pull the image and roll it out."))),
             h("div", { class: "side-stack" },
                 h(Card, { class: "metric-card" },
                     h("div", { class: "metric-head" },
@@ -285,12 +285,12 @@ function AppVariables({ a, org }) {
                 a.project.name),
             shared.length ? h(Table, { head: ["Key", "Value", ""] }, shared.map(row)) : h("div", { class: "muted" }, "None.")),
         h(Callout, { kind: "info" },
-            "Orchard also sets ",
+            "Wack Club Orchard also sets ",
             h("code", null, "PORT"),
             ", ",
-            h("code", null, "ORCHARD_APP"),
+            h("code", null, "WACKCLUBORCHARD_APP"),
             " and ",
-            h("code", null, "ORCHARD_URL"),
+            h("code", null, "WACKCLUBORCHARD_URL"),
             ".")));
 }
 function Domains({ a, reload }) {
@@ -463,6 +463,6 @@ function Settings({ a, reload }) {
                 h(Button, { kind: "primary", onClick: () => save({ health, command }) }, "Save")) : null),
         h(Card, { class: "form-card" },
             h("div", { class: "panel-title" }, "Access and isolation"),
-            h(Toggle, { checked: a.authWall, onChange: (v) => save({ authWall: v }, v ? "Auth wall on" : "Auth wall off"), disabled: dis, label: "Auth wall", hint: "Only signed-in members of this project can reach the app's URLs. The app sees X-Orchard-User." }),
+            h(Toggle, { checked: a.authWall, onChange: (v) => save({ authWall: v }, v ? "Auth wall on" : "Auth wall off"), disabled: dis, label: "Auth wall", hint: "Only signed-in members of this project can reach the app's URLs. The app sees X-Wackclubwackcluborchard-User." }),
             h(Toggle, { checked: a.sandboxed, onChange: (v) => save({ sandboxed: v }), disabled: dis, label: "gVisor sandbox", hint: "Runs pods under a user-space kernel. Needs the gvisor RuntimeClass on the nodes; use it for code you do not trust." }))));
 }

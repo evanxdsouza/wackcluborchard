@@ -209,7 +209,7 @@ function DbTerminal({ d }: { d: any }) {
       {sub === "psql" ? (
         d.canEdit ? (d.status === "ready" ? <Terminal path={`/databases/${d.id}/terminal`} title={`psql · ${d.dbName}`} prompt={d.dbName + "=>"} height={440} /> : <Callout kind="amber">The database must be running to open a terminal.</Callout>) : <Callout kind="info">Only project members can open a terminal.</Callout>
       ) : !cr.data ? <Loading /> : cr.data.length === 0 ? (
-        <Empty icon="check" title="Nothing killed">A Postgres container that gets OOMKilled is replaced fast enough that its logs are usually gone before anyone looks. Orchard keeps them here.</Empty>
+        <Empty icon="check" title="Nothing killed">A Postgres container that gets OOMKilled is replaced fast enough that its logs are usually gone before anyone looks. Wack Club Orchard keeps them here.</Empty>
       ) : cr.data.map((c) => (
         <Card key={c.id}>
           <div class="row" style={{ marginBottom: 10 }}><strong>{c.reason}</strong><span class="muted">exit {c.exitCode} · {c.pod} · {timeAgo(c.createdAt)}</span></div>
@@ -254,7 +254,7 @@ function Queries({ d }: { d: any }) {
   const [busy, setBusy] = useState(false);
   const [history, setHistory] = useState<string[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem("orchard-sql-" + d.id) || "[]");
+      return JSON.parse(localStorage.getItem("wackcluborchard-sql-" + d.id) || "[]");
     } catch {
       return [];
     }
@@ -268,7 +268,7 @@ function Queries({ d }: { d: any }) {
     const h = [sql, ...history.filter((x) => x !== sql)].slice(0, 15);
     setHistory(h);
     try {
-      localStorage.setItem("orchard-sql-" + d.id, JSON.stringify(h));
+      localStorage.setItem("wackcluborchard-sql-" + d.id, JSON.stringify(h));
     } catch {}
   };
   if (!d.canEdit) return <Callout kind="info">Only project members can run queries.</Callout>;

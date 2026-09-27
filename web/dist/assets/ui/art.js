@@ -30,7 +30,7 @@ export const palettes = {
         ground: [[146, 196, 108], [118, 172, 86], [92, 146, 70], [70, 120, 58], [52, 96, 48]],
         groundKind: "hills",
     },
-    orchard: {
+    wackcluborchard: {
         sky: [[238, 170, 150], [244, 190, 160], [248, 208, 172], [250, 222, 186], [252, 234, 204]],
         cloud: [[232, 170, 160], [242, 196, 178], [250, 220, 200], [255, 240, 226]],
         ground: [[176, 72, 76], [150, 54, 62], [122, 42, 52], [96, 34, 44], [72, 26, 36]],
@@ -186,7 +186,7 @@ export function Sky({ seed, preset, class: cls }) {
     return h("canvas", { ref, class: "sky " + (cls || "") });
 }
 export function avatarSVG(seed, size = 28) {
-    const r = rng(seed || "orchard");
+    const r = rng(seed || "wackcluborchard");
     const hues = [350, 20, 40, 150, 190, 220, 265, 300];
     const hue = hues[Math.floor(r() * hues.length)];
     const fg = `hsl(${hue} 70% 48%)`;

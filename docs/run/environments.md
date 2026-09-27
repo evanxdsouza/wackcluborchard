@@ -13,8 +13,8 @@ An app sees variables in layers, later ones winning:
 3. the app's own
 
 Secret variables are hidden from viewers and in listings, and written to a
-Kubernetes Secret like the rest. Orchard also sets `PORT`, `ORCHARD_APP` and
-`ORCHARD_URL`.
+Kubernetes Secret like the rest. Wack Club Orchard also sets `PORT`, `WACKCLUBORCHARD_APP` and
+`WACKCLUBORCHARD_URL`.
 
 ## References
 
@@ -28,4 +28,4 @@ Values can point at things in the same project, resolved at rollout:
 | `${{ app.PUBLIC_URL }}` | its HTTPS URL |
 
 Saving variables rolls every affected app. Import a whole `.env` from the
-Variables tab or with `orchard env <project> KEY=value …`.
+Variables tab or with `wackcluborchard env <project> KEY=value …`.

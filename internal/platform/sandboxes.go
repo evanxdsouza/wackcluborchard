@@ -24,7 +24,7 @@ type SandboxInput struct {
 }
 
 func (p *Platform) sandboxNS(d *store.Data, orgID string) string {
-	return "orchard-" + d.Orgs[orgID].Slug + "-greenhouse"
+	return "wackcluborchard-" + d.Orgs[orgID].Slug + "-greenhouse"
 }
 
 func (p *Platform) CreateSandbox(user *store.User, orgID string, in SandboxInput) (*store.Sandbox, error) {
@@ -129,7 +129,7 @@ func (p *Platform) SandboxRun(ctx context.Context, id string, cmd []string, stdi
 	}
 	var out bytes.Buffer
 	var in io.Reader
-	if stdin != "" || (len(cmd) > 0 && cmd[0] == "orchard-write") {
+	if stdin != "" || (len(cmd) > 0 && cmd[0] == "wackcluborchard-write") {
 		in = strings.NewReader(stdin)
 	}
 	err := p.Driver.SandboxExec(ctx, s.Namespace, s.Name, cmd, runtime.Stdio{Stdin: in, Stdout: &out})
@@ -233,7 +233,7 @@ func (p *Platform) agentLoop(sandboxID, convID, cwd string, hist []store.Message
 		p.appendMsg(sandboxID, convID, "assistant", "The agent needs an Anthropic API key. An instance admin can add one under Instance admin → Settings.")
 		return
 	}
-	model := os.Getenv("ORCHARD_AGENT_MODEL")
+	model := os.Getenv("WACKCLUBORCHARD_AGENT_MODEL")
 	if model == "" {
 		model = "claude-sonnet-5"
 	}
@@ -329,11 +329,11 @@ func (p *Platform) agentTool(ctx context.Context, sandboxID, cwd, name string, i
 	}
 	switch name {
 	case "list_files":
-		out, err = p.SandboxRun(ctx, sandboxID, []string{"orchard-ls"}, "")
+		out, err = p.SandboxRun(ctx, sandboxID, []string{"wackcluborchard-ls"}, "")
 	case "read_file":
-		out, err = p.SandboxRun(ctx, sandboxID, []string{"orchard-read", prefix + in["path"]}, "")
+		out, err = p.SandboxRun(ctx, sandboxID, []string{"wackcluborchard-read", prefix + in["path"]}, "")
 	case "write_file":
-		_, err = p.SandboxRun(ctx, sandboxID, []string{"orchard-write", prefix + in["path"]}, in["content"])
+		_, err = p.SandboxRun(ctx, sandboxID, []string{"wackcluborchard-write", prefix + in["path"]}, in["content"])
 		out = "wrote " + in["path"]
 	case "run":
 		c := in["command"]

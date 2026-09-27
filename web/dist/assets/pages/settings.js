@@ -456,7 +456,7 @@ function GitHubLink() {
     return (h(Card, { class: "form-card" },
         h("div", null,
             h("div", { class: "panel-title" }, "GitHub"),
-            h("div", { class: "panel-desc" }, "Link your account to deploy repositories. Orchard only ever sees the repositories you grant the app.")),
+            h("div", { class: "panel-desc" }, "Link your account to deploy repositories. Wack Club Orchard only ever sees the repositories you grant the app.")),
         !r.data.configured ? h(Callout, { kind: "amber" }, "The instance has no GitHub App yet. An instance admin creates it under Instance admin \u2192 GitHub.") : (h("div", { class: "row" },
             r.data.login ? h(Fragment, null,
                 h(Icon, { name: "github" }),
@@ -473,14 +473,14 @@ function CliMcp() {
     const host = location.origin;
     return (h(Fragment, null,
         h(Card, { class: "form-card" },
-            h("div", { class: "panel-title" }, "The orchard CLI"),
-            h(CodeBlock, { label: "sign in", code: `orchard login ${host}\norchard apps\norchard deploy api\norchard logs api -f\norchard run warm-site` })),
+            h("div", { class: "panel-title" }, "The wackcluborchard CLI"),
+            h(CodeBlock, { label: "sign in", code: `wackcluborchard login ${host}\nwackcluborchard apps\nwackcluborchard deploy api\nwackcluborchard logs api -f\nwackcluborchard run warm-site` })),
         h(Card, { class: "form-card" },
             h("div", null,
                 h("div", { class: "panel-title" }, "MCP for agents"),
                 h("div", { class: "panel-desc" }, "Agents like Claude can list, deploy, scale, roll back, read logs, query databases and run jobs. Authenticate with a personal API token.")),
-            h(CodeBlock, { label: "claude code", code: `claude mcp add --transport http orchard ${host}/mcp \\\n  --header "Authorization: Bearer orch_…"` }),
-            h(CodeBlock, { label: "mcp.json", code: JSON.stringify({ mcpServers: { orchard: { type: "http", url: host + "/mcp", headers: { Authorization: "Bearer orch_…" } } } }, null, 2) }))));
+            h(CodeBlock, { label: "claude code", code: `claude mcp add --transport http wackcluborchard ${host}/mcp \\\n  --header "Authorization: Bearer wackclubwackcluborchard_…"` }),
+            h(CodeBlock, { label: "mcp.json", code: JSON.stringify({ mcpServers: { wackcluborchard: { type: "http", url: host + "/mcp", headers: { Authorization: "Bearer wackclubwackcluborchard_…" } } } }, null, 2) }))));
 }
 export function AdminPage() {
     const [tab, setTab] = useTab("settings");
@@ -593,7 +593,7 @@ function AdminGitHub() {
     return (h(Card, { class: "form-card" },
         h("div", null,
             h("div", { class: "panel-title" }, "GitHub App"),
-            h("div", { class: "panel-desc" }, "Orchard generates the app manifest, GitHub creates the app, and the credentials come back automatically. Then each person links their own account.")),
+            h("div", { class: "panel-desc" }, "Wack Club Orchard generates the app manifest, GitHub creates the app, and the credentials come back automatically. Then each person links their own account.")),
         r.data.configured ? (h(Callout, { kind: "green", title: `Connected as ${r.data.slug}` },
             "Pushes to tracked branches deploy automatically. ",
             h("a", { href: r.data.installUrl, target: "_blank", rel: "noopener" }, "Install on more accounts \u2197"))) : null,
@@ -671,10 +671,10 @@ function AdminNodes() {
                 (n.roles || []).map((x) => h(Tag, { key: x }, x)),
                 h(Tag, { mono: true }, n.arch),
                 h(Tag, { mono: true }, n.kubelet),
-                n.labels?.["orchard.dev/pool"] ? h(Tag, null,
+                n.labels?.["wackcluborchard.dev/pool"] ? h(Tag, null,
                     h(Icon, { name: "layers", size: 11 }),
                     " ",
-                    n.labels["orchard.dev/pool"]) : null),
+                    n.labels["wackcluborchard.dev/pool"]) : null),
             h(Meter, { label: "CPU requested", used: n.requestedCpuMillis, cap: n.allocatableCpuMillis, format: cpu }),
             h(Meter, { label: "Memory requested", used: n.requestedMemoryMi, cap: n.allocatableMemoryMi, format: mem }),
             h("div", { class: "muted", style: { fontSize: 12.5 } },

@@ -93,7 +93,7 @@ export function toast(text: string, kind: Toast["kind"] = "info") {
 export type Theme = "light" | "dark" | "system";
 function readTheme(): Theme {
   try {
-    return (localStorage.getItem("orchard-theme") as Theme) || "system";
+    return (localStorage.getItem("wackcluborchard-theme") as Theme) || "system";
   } catch {
     return "system";
   }
@@ -106,7 +106,7 @@ export function applyTheme() {
 }
 theme.subscribe(() => {
   try {
-    localStorage.setItem("orchard-theme", theme.get());
+    localStorage.setItem("wackcluborchard-theme", theme.get());
   } catch {}
   applyTheme();
 });
@@ -116,7 +116,7 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme
 
 function readCollapsed() {
   try {
-    return localStorage.getItem("orchard-sidebar") === "collapsed";
+    return localStorage.getItem("wackcluborchard-sidebar") === "collapsed";
   } catch {
     return false;
   }
@@ -124,7 +124,7 @@ function readCollapsed() {
 export const sidebarCollapsed = new Store<boolean>(readCollapsed());
 sidebarCollapsed.subscribe(() => {
   try {
-    localStorage.setItem("orchard-sidebar", sidebarCollapsed.get() ? "collapsed" : "open");
+    localStorage.setItem("wackcluborchard-sidebar", sidebarCollapsed.get() ? "collapsed" : "open");
   } catch {}
 });
 
@@ -134,7 +134,7 @@ export function currentOrgSlug(): string | null {
   const m = location.pathname.match(/^\/o\/([^/]+)/);
   if (m) return decodeURIComponent(m[1]);
   try {
-    return localStorage.getItem("orchard-org");
+    return localStorage.getItem("wackcluborchard-org");
   } catch {
     return null;
   }
@@ -142,6 +142,6 @@ export function currentOrgSlug(): string | null {
 
 export function rememberOrg(slug: string) {
   try {
-    localStorage.setItem("orchard-org", slug);
+    localStorage.setItem("wackcluborchard-org", slug);
   } catch {}
 }

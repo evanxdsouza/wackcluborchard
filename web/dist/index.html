@@ -11,11 +11,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="/app.css?v=d0dc2e9875">
+  <link rel="stylesheet" href="/app.css?v=6ff97cb342">
   <script>
     (function () {
       try {
-        var t = localStorage.getItem("orchard-theme") || "system";
+        var t = localStorage.getItem("wackcluborchard-theme") || "system";
         var dark = t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
         document.documentElement.dataset.theme = dark ? "dark" : "light";
       } catch (e) {}
@@ -25,6 +25,6 @@
 <body>
   <div id="app"><div class="boot"><span class="spinner"></span></div></div>
   <noscript>Wack Club Orchard needs JavaScript.</noscript>
-  <script type="module" src="/assets/main.js?v=d0dc2e9875"></script>
+  <script type="module" src="/assets/main.js?v=6ff97cb342"></script>
 </body>
 </html>

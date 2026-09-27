@@ -1,4 +1,4 @@
-// Package api is Orchard's HTTP surface: the JSON API the dashboard and
+// Package api is Wack Club Orchard's HTTP surface: the JSON API the dashboard and
 // CLI use, server-sent events, WebSocket terminals, SCIM, the GitHub
 // webhook, the MCP endpoint, and the static frontend.
 package api
@@ -76,7 +76,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	sw := &statusWriter{ResponseWriter: w, code: 200}
 	s.mux.ServeHTTP(sw, r)
-	if strings.HasPrefix(r.URL.Path, "/api/") && !strings.Contains(r.URL.Path, "/logs") && !strings.HasSuffix(r.URL.Path, "/events") && os.Getenv("ORCHARD_QUIET") == "" {
+	if strings.HasPrefix(r.URL.Path, "/api/") && !strings.Contains(r.URL.Path, "/logs") && !strings.HasSuffix(r.URL.Path, "/events") && os.Getenv("WACKCLUBORCHARD_QUIET") == "" {
 		log.Printf("%s %s %d %s", r.Method, r.URL.Path, sw.code, time.Since(start).Round(time.Millisecond))
 	}
 }
@@ -168,7 +168,7 @@ func clientIP(r *http.Request) string {
 
 // ---- authentication ----
 
-const cookieName = "orchard_session"
+const cookieName = "wackcluborchard_session"
 
 func (s *Server) authenticate(r *http.Request) *http.Request {
 	var user *store.User

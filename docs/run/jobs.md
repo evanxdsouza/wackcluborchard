@@ -18,7 +18,7 @@ exit code, a failing step stops the pipeline, and later steps show as skipped.
 ## Scheduling
 
 Standard five-field cron in UTC, or `@hourly`/`@daily`/`@weekly`/`@monthly`.
-Without a schedule a job runs when triggered: dashboard, `orchard run`, or the
+Without a schedule a job runs when triggered: dashboard, `wackcluborchard run`, or the
 `run_job` MCP tool. The concurrency policy decides what happens when the
 previous run is still going: **skip**, **queue** or **allow**.
 

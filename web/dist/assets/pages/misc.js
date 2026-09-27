@@ -179,7 +179,7 @@ function NewSandbox({ org, close }) {
             h(Field, { label: "Name" },
                 h(Input, { value: name, onInput: (v) => setName(v.toLowerCase().replace(/[^a-z0-9-]/g, "-")), autofocus: true, mono: true, placeholder: "scratch" })),
             h(Field, { label: "Repository", hint: "Optional. owner/name, cloned into /workspace on first boot." },
-                h(Input, { value: repo, onInput: setRepo, mono: true, placeholder: "hackclub/orchard" })),
+                h(Input, { value: repo, onInput: setRepo, mono: true, placeholder: "hackclub/wackcluborchard" })),
             h(Field, { label: "Image", hint: "Optional. Defaults to a devcontainer with common toolchains." },
                 h(Input, { value: image, onInput: setImage, mono: true, placeholder: "mcr.microsoft.com/devcontainers/universal:2-linux" }))),
         h("div", { class: "modal-foot" },

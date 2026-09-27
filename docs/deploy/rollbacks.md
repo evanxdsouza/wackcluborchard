@@ -2,7 +2,7 @@
 
 The **Deploys** tab lists every image the app has run, newest first, with the
 commit, trigger and duration. Roll back to any successful one in one click
-(or `orchard rollback <app>`).
+(or `wackcluborchard rollback <app>`).
 
 A rollback is an ordinary deploy that points at an older image: same rolling
 update, same health checks. It does not revert your repository and does not undo
